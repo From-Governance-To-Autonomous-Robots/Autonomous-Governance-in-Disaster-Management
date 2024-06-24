@@ -154,7 +154,8 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 wandb/
-saved_models/
+saved_models*
+logs*
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

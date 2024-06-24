@@ -5,12 +5,12 @@ from torch.utils.data import Dataset
 from PIL import Image
 from transformers import BertTokenizer
 from torchvision import transforms
-import os 
+import os
 
 class MultimodalDataset(Dataset):
-    def __init__(self, csv_file,dataset_directory, target_columns, transform=None, tokenizer_name='bert-base-uncased', max_seq_length=128):
+    def __init__(self, csv_file, dataset_directory, target_columns, transform=None, tokenizer_name='bert-base-uncased', max_seq_length=128):
         self.dataset_directory = dataset_directory
-        self.data = pd.read_csv(csv_file, sep='\t')
+        self.data = pd.read_csv(os.path.join(dataset_directory,csv_file), sep='\t')
         self.transform = transform
         self.tokenizer = BertTokenizer.from_pretrained(tokenizer_name)
         self.max_seq_length = max_seq_length
@@ -29,7 +29,7 @@ class MultimodalDataset(Dataset):
 
     def __getitem__(self, idx):
         img_path = self.data.iloc[idx]['image_path']
-        image = Image.open(os.path.join(self.dataset_directory,img_path)).convert('RGB')
+        image = Image.open(os.path.join(self.dataset_directory, img_path)).convert('RGB')
         if self.transform:
             image = self.transform(image)
         

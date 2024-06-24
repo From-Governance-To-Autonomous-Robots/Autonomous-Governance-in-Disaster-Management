@@ -10,7 +10,7 @@ import wandb
 from data.dataset import MultimodalDataset,transform
 from models.model import MultimodalModel
 from config import Config
-import numpy as np
+import numpy as np 
 
 class WeightedBCELoss(nn.Module):
     def __init__(self):
@@ -56,7 +56,7 @@ def train_model(config):
     # Load data
     train_dataset = MultimodalDataset(
         csv_file=config.TRAIN_DATA_PATH,
-        dataset_directory=config.TRAIN_DATASET_DIR_PATH,
+        dataset_directory=config.DATASET_DIR_PATH,
         target_columns=config.TARGET_COLUMNS,
         transform=transform,
         tokenizer_name=config.BERT_MODEL_NAME,
@@ -66,7 +66,7 @@ def train_model(config):
 
     val_dataset = MultimodalDataset(
         csv_file=config.VAL_DATA_PATH,
-        dataset_directory=config.VAL_DATASET_DIR_PATH,
+        dataset_directory=config.DATASET_DIR_PATH,
         target_columns=config.TARGET_COLUMNS,
         transform=transform,
         tokenizer_name=config.BERT_MODEL_NAME,

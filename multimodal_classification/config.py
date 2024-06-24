@@ -2,10 +2,19 @@ import os
 
 class Config:
     # Paths
-    TRAIN_DATA_PATH = '/home/julian/datasets/crisis_mmd/train/data_image/hurricane_maria/hurricane_maria_final_data.tsv'
-    VAL_DATA_PATH = '/home/julian/datasets/crisis_mmd/val/data_image/hurricane_irma/hurricane_irma_final_data.tsv'
-    TRAIN_DATASET_DIR_PATH = '/home/julian/datasets/crisis_mmd/train'
-    VAL_DATASET_DIR_PATH = '/home/julian/datasets/crisis_mmd/val'
+    TSV_FILES = [
+        # 'annotations/california_wildfires_final_data.tsv',
+        # 'annotations/hurricane_harvey_final_data.tsv',
+        'annotations/hurricane_irma_final_data.tsv',
+        'annotations/hurricane_maria_final_data.tsv'
+        # 'annotations/iraq_iran_earthquake_final_data.tsv',
+        # 'annotations/mexico_earthquake_final_data.tsv',
+        # 'annotations/srilanka_floods_final_data.tsv'
+    ]
+    COMBINED_DATA_PATH = 'annotations/combined_data.tsv'
+    TRAIN_DATA_PATH = 'annotations/train_data.tsv'
+    VAL_DATA_PATH = 'annotations/val_data.tsv'
+    DATASET_DIR_PATH = '/home/julian/datasets/crisis_mmd/train' 
     MODEL_SAVE_DIR = 'saved_models'
     LOG_DIR = 'logs'
 
@@ -24,8 +33,9 @@ class Config:
 
     # Target Columns for Training
     TARGET_COLUMNS = ['text_info', 'image_info']
-    DROPPED_COLUMNS = ['tweet_id', 'image_id', 'image_path', 'text_human', 'image_human', 'image_damage']
+    DROPPED_COLUMNS = ['tweet_id', 'image_id', 'text_human','text_human_conf', 'image_human','image_human_conf', 'image_damage','image_damage_conf']
 
     # Ensure directories exist
     os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
     os.makedirs(LOG_DIR, exist_ok=True)
+    os.makedirs(DATASET_DIR_PATH, exist_ok=True)

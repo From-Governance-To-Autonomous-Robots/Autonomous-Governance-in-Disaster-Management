@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import wandb
 import os
 
-def perform_data_analysis(data_path, save_dir):
+def perform_data_analysis(data_path, save_dir,label_columns):
     # Load the dataset
     data = pd.read_csv(data_path, sep='\t')
 
@@ -15,7 +15,7 @@ def perform_data_analysis(data_path, save_dir):
     wandb.log({'summary_statistics': wandb.Html(summary_str.replace('\n', '<br>'))})
 
     # Distribution of categorical columns and their confidence scores
-    label_columns = ['text_info', 'image_info', 'text_human', 'image_human', 'image_damage']
+    # label_columns = ['text_info', 'image_info', 'text_human', 'image_human', 'image_damage']
     for column in label_columns:
         # Plot the distribution of labels
         plt.figure(figsize=(10, 6))
@@ -50,17 +50,6 @@ def perform_data_analysis(data_path, save_dir):
     plt.tight_layout()
     plt.savefig(os.path.join(save_dir, 'text_length_distribution.png'))
     wandb.log({'text_length_distribution': wandb.Image(os.path.join(save_dir, 'text_length_distribution.png'))})
-
-    # Missing data analysis
-    missing_data = data.isnull().sum()
-    missing_data = missing_data[missing_data > 0]
-    plt.figure(figsize=(10, 6))
-    missing_data.plot(kind='bar')
-    plt.title('Missing Data')
-    plt.ylabel('Count')
-    plt.tight_layout()
-    plt.savefig(os.path.join(save_dir, 'missing_data.png'))
-    wandb.log({'missing_data': wandb.Image(os.path.join(save_dir, 'missing_data.png'))})
 
     # Log the dataframe to WandB
     wandb.log({'dataset': wandb.Table(dataframe=data)})
