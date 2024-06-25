@@ -27,8 +27,8 @@ def main():
     split_data(combined_df, Config.TRAIN_DATA_PATH, Config.VAL_DATA_PATH, Config.IMAGE_TARGET_COLUMN)
     
     # Perform data analysis
-    perform_data_analysis(os.path.join(Config.DATASET_DIR_PATH,Config.TRAIN_DATA_PATH), Config.LOG_DIR)
-    perform_data_analysis(os.path.join(Config.DATASET_DIR_PATH,Config.VAL_DATA_PATH), Config.LOG_DIR)
+    perform_data_analysis(os.path.join(Config.DATASET_DIR_PATH,Config.TRAIN_DATA_PATH), Config.LOG_DIR,label_columns=[Config.IMAGE_TARGET_COLUMN,Config.TEXT_TARGET_COLUMN])
+    perform_data_analysis(os.path.join(Config.DATASET_DIR_PATH,Config.VAL_DATA_PATH), Config.LOG_DIR,label_columns=[Config.IMAGE_TARGET_COLUMN,Config.TEXT_TARGET_COLUMN])
 
     # Train the model
     train_model(Config)
