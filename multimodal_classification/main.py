@@ -3,7 +3,6 @@ import logging
 from config import Config
 from analysis.data_analysis import perform_data_analysis
 from training.train import train_model
-import os
 from data.prepare_data import combine_tsv_files, split_data
 
 def setup_logging(log_dir):
@@ -22,12 +21,13 @@ def main():
     wandb.init(project=Config.WANDB_PROJECT, name=Config.WANDB_NAME)
     
     # Combine TSV files and split the data
-    combined_df = combine_tsv_files(Config.DATASET_DIR_PATH,Config.TSV_FILES, Config.COMBINED_DATA_PATH, Config.TARGET_COLUMNS, Config.DROPPED_COLUMNS)
-    split_data(Config.DATASET_DIR_PATH,combined_df, Config.TRAIN_DATA_PATH, Config.VAL_DATA_PATH, Config.TARGET_COLUMNS)
+    combined_df = combine_tsv_files(Config.TSV_FILES, Config.COMBINED_DATA_PATH, Config.DROPPED_COLUMNS)
+    split_data(combined_df, Config.TRAIN_DATA_PATH, Config.VAL_DATA_PATH, Config.TEXT_TARGET_COLUMN)
+    split_data(combined_df, Config.TRAIN_DATA_PATH, Config.VAL_DATA_PATH, Config.IMAGE_TARGET_COLUMN)
     
     # Perform data analysis
-    perform_data_analysis(os.path.join(Config.DATASET_DIR_PATH,Config.TRAIN_DATA_PATH), Config.LOG_DIR,Config.TARGET_COLUMNS)
-    perform_data_analysis(os.path.join(Config.DATASET_DIR_PATH,Config.VAL_DATA_PATH), Config.LOG_DIR,Config.TARGET_COLUMNS)
+    perform_data_analysis(Config.TRAIN_DATA_PATH, Config.LOG_DIR)
+    perform_data_analysis(Config.VAL_DATA_PATH, Config.LOG_DIR)
 
     # Train the model
     train_model(Config)

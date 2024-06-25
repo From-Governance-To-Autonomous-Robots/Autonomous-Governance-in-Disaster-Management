@@ -7,7 +7,6 @@ This project provides a framework for training a multimodal image classification
 
 - Train classification for Informative vs Non Informative 
 - Train mulitlabel classification for type of humanitarian aid
-- Train classification for damage type 
 
 ## Directory Structure
 

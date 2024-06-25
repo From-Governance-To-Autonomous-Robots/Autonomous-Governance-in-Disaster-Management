@@ -7,77 +7,79 @@ from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from tqdm import tqdm
 import wandb
-from data.dataset import MultimodalDataset,transform
+from data.dataset import MultimodalDataset, transform
 from models.model import MultimodalModel
 from config import Config
-import numpy as np 
-
-class WeightedBCELoss(nn.Module):
-    def __init__(self):
-        super(WeightedBCELoss, self).__init__()
-        self.bce_loss = nn.BCEWithLogitsLoss(reduction='none')
-
-    def forward(self, logits, targets, weights):
-        loss = self.bce_loss(logits, targets)
-        weighted_loss = loss * weights
-        return weighted_loss.mean()
 
 def evaluate_model(model, data_loader, criterion, device):
     model.eval()
-    all_labels = []
-    all_preds = []
+    all_text_labels = []
+    all_image_labels = []
+    all_text_preds = []
+    all_image_preds = []
     total_loss = 0.0
 
     with torch.no_grad():
-        for images, input_ids, attention_mask, labels, confidence_scores in tqdm(data_loader, desc="Validating"):
-            images, input_ids, attention_mask = images.to(device), input_ids.to(device), attention_mask.to(device)
-            labels, confidence_scores = labels.to(device), confidence_scores.to(device)
-            outputs = model(images, input_ids, attention_mask)
-            loss = criterion(outputs, labels, confidence_scores)
-            total_loss += loss.item() * images.size(0)
+        for text_input_ids, text_attention_mask, image, text_labels, image_labels in tqdm(data_loader, desc="Validating"):
+            text_input_ids, text_attention_mask = text_input_ids.to(device), text_attention_mask.to(device)
+            image = image.to(device)
+            text_labels, image_labels = text_labels.to(device), image_labels.to(device)
 
-            preds = torch.sigmoid(outputs).cpu().numpy()
-            all_labels.extend(labels.cpu().numpy())
-            all_preds.extend(preds)
+            text_outputs, image_outputs = model(text_input_ids, text_attention_mask, image)
+            text_loss = criterion(text_outputs, text_labels)
+            image_loss = criterion(image_outputs, image_labels)
+            loss = text_loss + image_loss
+            total_loss += loss.item() * text_input_ids.size(0)
+
+            text_preds = torch.argmax(text_outputs, dim=1).cpu().numpy()
+            image_preds = torch.argmax(image_outputs, dim=1).cpu().numpy()
+            all_text_labels.extend(text_labels.cpu().numpy())
+            all_image_labels.extend(image_labels.cpu().numpy())
+            all_text_preds.extend(text_preds)
+            all_image_preds.extend(image_preds)
 
     avg_loss = total_loss / len(data_loader.dataset)
-    all_labels = np.array(all_labels)
-    all_preds = np.array(all_preds) > 0.5
+    text_accuracy = accuracy_score(all_text_labels, all_text_preds)
+    image_accuracy = accuracy_score(all_image_labels, all_image_preds)
+    text_precision, text_recall, text_f1, _ = precision_recall_fscore_support(all_text_labels, all_text_preds, average='weighted')
+    image_precision, image_recall, image_f1, _ = precision_recall_fscore_support(all_image_labels, all_image_preds, average='weighted')
 
-    accuracy = accuracy_score(all_labels, all_preds)
-    precision, recall, f1, _ = precision_recall_fscore_support(all_labels, all_preds, average='weighted')
-
-    return avg_loss, accuracy, precision, recall, f1
+    return avg_loss, text_accuracy, text_precision, text_recall, text_f1, image_accuracy, image_precision, image_recall, image_f1
 
 def train_model(config):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logging.info(f"Using device: {device}")
-    
+
     # Load data
     train_dataset = MultimodalDataset(
         csv_file=config.TRAIN_DATA_PATH,
-        dataset_directory=config.DATASET_DIR_PATH,
-        target_columns=config.TARGET_COLUMNS,
-        transform=transform,
+        text_columns=config.TEXT_COLUMNS,
+        image_column=config.IMAGE_COLUMN,
+        text_target_column=config.TEXT_TARGET_COLUMN,
+        image_target_column=config.IMAGE_TARGET_COLUMN,
         tokenizer_name=config.BERT_MODEL_NAME,
-        max_seq_length=config.MAX_SEQ_LENGTH
+        max_seq_length=config.MAX_SEQ_LENGTH,
+        transform=transform
     )
     train_loader = DataLoader(train_dataset, batch_size=config.BATCH_SIZE, shuffle=True)
 
     val_dataset = MultimodalDataset(
         csv_file=config.VAL_DATA_PATH,
-        dataset_directory=config.DATASET_DIR_PATH,
-        target_columns=config.TARGET_COLUMNS,
-        transform=transform,
+        text_columns=config.TEXT_COLUMNS,
+        image_column=config.IMAGE_COLUMN,
+        text_target_column=config.TEXT_TARGET_COLUMN,
+        image_target_column=config.IMAGE_TARGET_COLUMN,
         tokenizer_name=config.BERT_MODEL_NAME,
-        max_seq_length=config.MAX_SEQ_LENGTH
+        max_seq_length=config.MAX_SEQ_LENGTH,
+        transform=transform
     )
     val_loader = DataLoader(val_dataset, batch_size=config.BATCH_SIZE, shuffle=False)
 
     # Initialize model, loss function, and optimizer
-    num_labels = len(config.TARGET_COLUMNS)
-    model = MultimodalModel(bert_model_name=config.BERT_MODEL_NAME, num_labels=num_labels).to(device)
-    criterion = WeightedBCELoss()
+    num_text_labels = len(train_dataset.text_label_encoder[config.TEXT_TARGET_COLUMN].classes_)
+    num_image_labels = len(train_dataset.image_label_encoder[config.IMAGE_TARGET_COLUMN].classes_)
+    model = MultimodalModel(bert_model_name=config.BERT_MODEL_NAME, num_text_labels=num_text_labels, num_image_labels=num_image_labels).to(device)
+    criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
 
     best_val_f1 = 0.0
@@ -86,26 +88,29 @@ def train_model(config):
     for epoch in range(config.NUM_EPOCHS):
         model.train()
         running_loss = 0.0
-        for images, input_ids, attention_mask, labels, confidence_scores in tqdm(train_loader, desc=f"Training Epoch {epoch+1}"):
-            images, input_ids, attention_mask = images.to(device), input_ids.to(device), attention_mask.to(device)
-            labels, confidence_scores = labels.to(device), confidence_scores.to(device)
+        for text_input_ids, text_attention_mask, image, text_labels, image_labels in tqdm(train_loader, desc=f"Training Epoch {epoch+1}"):
+            text_input_ids, text_attention_mask = text_input_ids.to(device), text_attention_mask.to(device)
+            image = image.to(device)
+            text_labels, image_labels = text_labels.to(device), image_labels.to(device)
             optimizer.zero_grad()
-            
-            outputs = model(images, input_ids, attention_mask)
-            loss = criterion(outputs, labels, confidence_scores)
+
+            text_outputs, image_outputs = model(text_input_ids, text_attention_mask, image)
+            text_loss = criterion(text_outputs, text_labels)
+            image_loss = criterion(image_outputs, image_labels)
+            loss = text_loss + image_loss
             loss.backward()
             optimizer.step()
-            
-            running_loss += loss.item() * images.size(0)
-        
+
+            running_loss += loss.item() * text_input_ids.size(0)
+
         epoch_loss = running_loss / len(train_loader.dataset)
-        val_loss, val_accuracy, val_precision, val_recall, val_f1 = evaluate_model(model, val_loader, criterion, device)
+        val_loss, text_accuracy, text_precision, text_recall, text_f1, image_accuracy, image_precision, image_recall, image_f1 = evaluate_model(model, val_loader, criterion, device)
 
         # Save the model after each epoch
         torch.save(model.state_dict(), os.path.join(config.MODEL_SAVE_DIR, f'model_epoch_{epoch+1}.pth'))
 
-        if val_f1 > best_val_f1:
-            best_val_f1 = val_f1
+        if text_f1 + image_f1 > best_val_f1:
+            best_val_f1 = text_f1 + image_f1
             torch.save(model.state_dict(), os.path.join(config.MODEL_SAVE_DIR, 'best_model.pth'))
 
         # Log metrics
@@ -113,10 +118,14 @@ def train_model(config):
             'epoch': epoch+1,
             'train_loss': epoch_loss,
             'val_loss': val_loss,
-            'val_accuracy': val_accuracy,
-            'val_precision': val_precision,
-            'val_recall': val_recall,
-            'val_f1': val_f1
+            'text_accuracy': text_accuracy,
+            'text_precision': text_precision,
+            'text_recall': text_recall,
+            'text_f1': text_f1,
+            'image_accuracy': image_accuracy,
+            'image_precision': image_precision,
+            'image_recall': image_recall,
+            'image_f1': image_f1
         })
 
-        logging.info(f"Epoch {epoch+1}/{config.NUM_EPOCHS}, Loss: {epoch_loss:.4f}, Val Loss: {val_loss:.4f}, Val Acc: {val_accuracy:.4f}, Val Prec: {val_precision:.4f}, Val Recall: {val_recall:.4f}, Val F1: {val_f1:.4f}")
+        logging.info(f"Epoch {epoch+1}/{config.NUM_EPOCHS}, Loss: {epoch_loss:.4f}, Val Loss: {val_loss:.4f}, Text Acc: {text_accuracy:.4f}, Text Prec: {text_precision:.4f}, Text Recall: {text_recall:.4f}, Text F1: {text_f1:.4f}, Image Acc: {image_accuracy:.4f}, Image Prec: {image_precision:.4f}, Image Recall: {image_recall:.4f}, Image F1: {image_f1:.4f}")

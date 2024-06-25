@@ -32,7 +32,10 @@ class Config:
     WANDB_NAME = 'training'
 
     # Target Columns for Training
-    TARGET_COLUMNS = ['text_info', 'image_info']
+    TEXT_COLUMNS = ['tweet_text']  # Specify which columns to use as input features
+    IMAGE_COLUMN = 'image_path'
+    TEXT_TARGET_COLUMN = 'text_info'
+    IMAGE_TARGET_COLUMN = 'image_info'
     DROPPED_COLUMNS = ['tweet_id', 'image_id', 'text_human','text_human_conf', 'image_human','image_human_conf', 'image_damage','image_damage_conf']
 
     # Ensure directories exist
