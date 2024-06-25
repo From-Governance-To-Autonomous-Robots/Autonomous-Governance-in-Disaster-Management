@@ -5,10 +5,12 @@ from torchvision import transforms
 from PIL import Image
 from sklearn.preprocessing import LabelEncoder
 import torch
+import os 
 
 class MultimodalDataset(Dataset):
-    def __init__(self, csv_file, text_columns, image_column, text_target_column, image_target_column, tokenizer_name='bert-base-uncased', max_seq_length=128, transform=None):
-        self.data = pd.read_csv(csv_file, sep='\t')
+    def __init__(self, csv_file,dataset_directory, text_columns, image_column, text_target_column, image_target_column, tokenizer_name='bert-base-uncased', max_seq_length=128, transform=None):
+        self.dataset_dir = dataset_directory
+        self.data = pd.read_csv(os.path.join(dataset_directory,csv_file), sep='\t')
         self.text_columns = text_columns
         self.image_column = image_column
         self.text_target_column = text_target_column
@@ -44,7 +46,7 @@ class MultimodalDataset(Dataset):
         text_attention_mask = encoded_text['attention_mask'].squeeze()
 
         img_path = self.data.iloc[idx][self.image_column]
-        image = Image.open(img_path).convert('RGB')
+        image = Image.open(os.path.join(self.dataset_dir,img_path)).convert('RGB')
         if self.transform:
             image = self.transform(image)
 
