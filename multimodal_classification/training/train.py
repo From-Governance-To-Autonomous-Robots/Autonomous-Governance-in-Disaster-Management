@@ -53,6 +53,7 @@ def train_model(config):
     # Load data
     train_dataset = MultimodalDataset(
         csv_file=config.TRAIN_DATA_PATH,
+        dataset_directory=config.DATASET_DIR_PATH,
         text_columns=config.TEXT_COLUMNS,
         image_column=config.IMAGE_COLUMN,
         text_target_column=config.TEXT_TARGET_COLUMN,
@@ -65,6 +66,7 @@ def train_model(config):
 
     val_dataset = MultimodalDataset(
         csv_file=config.VAL_DATA_PATH,
+        dataset_directory=config.DATASET_DIR_PATH,
         text_columns=config.TEXT_COLUMNS,
         image_column=config.IMAGE_COLUMN,
         text_target_column=config.TEXT_TARGET_COLUMN,
