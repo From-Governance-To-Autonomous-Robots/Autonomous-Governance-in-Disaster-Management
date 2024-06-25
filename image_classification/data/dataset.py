@@ -31,6 +31,6 @@ class ImageClassificationDataset(Dataset):
 
 # Example transform
 transform = transforms.Compose([
-    transforms.Resize((128, 128)),
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
 ])

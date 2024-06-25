@@ -12,10 +12,10 @@ class Config:
         'annotations/srilanka_floods_final_data.tsv'
     ]
     DATASET_DIR_PATH = '/home/aaimscadmin/IRP_DATA/CrisisMMD_v2.0'
-    COMBINED_DATA_PATH = os.path.join(DATASET_DIR_PATH,'annotations/combined_data_human.tsv')
-    TRAIN_DATA_PATH = os.path.join(DATASET_DIR_PATH,'annotations/train_data_human.tsv')
-    VAL_DATA_PATH = os.path.join(DATASET_DIR_PATH,'annotations/val_data_human.tsv')
-    MODEL_SAVE_DIR = 'saved_models_human'
+    COMBINED_DATA_PATH = os.path.join(DATASET_DIR_PATH,'annotations/combined_data_damage.tsv')
+    TRAIN_DATA_PATH = os.path.join(DATASET_DIR_PATH,'annotations/train_data_damage.tsv')
+    VAL_DATA_PATH = os.path.join(DATASET_DIR_PATH,'annotations/val_data_damage.tsv')
+    MODEL_SAVE_DIR = 'saved_models_damage'
     LOG_DIR = 'logs_human'
     
     # Hyperparameters
