@@ -156,6 +156,8 @@ cython_debug/
 wandb/
 saved_models*
 logs*
+*_saved_models/
+glove_embeddings/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

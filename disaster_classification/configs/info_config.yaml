@@ -1,0 +1,28 @@
+paths:
+  tsv_files:
+    - 'annotations/california_wildfires_final_data.tsv'
+    - 'annotations/hurricane_harvey_final_data.tsv'
+    - 'annotations/hurricane_irma_final_data.tsv'
+    - 'annotations/hurricane_maria_final_data.tsv'
+    - 'annotations/iraq_iran_earthquake_final_data.tsv'
+    - 'annotations/mexico_earthquake_final_data.tsv'
+    - 'annotations/srilanka_floods_final_data.tsv'
+  task: 'info'
+  dataset_dir_path: '/home/aaimscadmin/IRP_DATA/CrisisMMD_v2.0'
+  glove_file: '/home/aaimscadmin/git-repo/cloud_repo/text_classification/glove_embeddings/glove.twitter.27B.100d.txt'
+
+data:
+  classes_to_drop:
+    -
+
+model_training_parameters:
+  wandb_project: 'text_classification'
+  vocab_size: 20000 
+  max_seq_len: 20 # Varies per task
+  test_size: 0.3
+  random_state: 42
+  batch_size: 16
+  num_epochs: 100
+  learning_rate: 0.001
+  hidden_dim: 64
+  embedding_dim: 100

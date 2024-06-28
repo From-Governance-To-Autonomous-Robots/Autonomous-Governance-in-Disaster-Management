@@ -1,0 +1,28 @@
+paths:
+  dataset_dir_path: '/home/aaimscadmin/IRP_DATA/RescueNet/classifier_dataset'
+  task: 'drone_damage'
+  phases: 
+    - 'train'
+    - 'val'
+  evaluation_image_dir_path: '/home/aaimscadmin/IRP_DATA/RescueNet/val/val-org-img'
+  evaluation_ground_truth_dir_path: '/home/aaimscadmin/IRP_DATA/RescueNet/val/val-label-img'
+  evaluation_gt_labels:
+    - 'background'
+    - 'water'
+    - 'building_no_damage'
+    - 'building_minor_damage'
+    - 'building_major_damage'
+    - 'building_destroyed'
+    - 'vehicle'
+    - 'road_clear'
+    - 'road_blocked'
+    - 'tree'
+    - 'pool'
+
+model_training_parameters:
+  wandb_project: 'post_disaster_classification'
+  test_size: 0.3
+  random_state: 42
+  batch_size: 32
+  num_epochs: 100
+  learning_rate: 0.001
