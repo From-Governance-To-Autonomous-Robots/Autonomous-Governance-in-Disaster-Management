@@ -18,7 +18,7 @@ nltk.download('wordnet')
 
 def main(args):
     config = load_config(args.config)
-    wandb.init(project=config['model_training_parameters']['wandb_project'],name=f"run_{config['paths']['task']}_train")
+    wandb.init(project=config['model_training_parameters']['wandb_project'],name=f"run_text_{config['paths']['task']}_train")
     
     dataset, whole_dataset_csv_path = load_and_combine_tsv_data(config['paths']['tsv_files'], dataset_dir=config['paths']['dataset_dir_path'])
     
@@ -44,7 +44,7 @@ def main(args):
     filtered_dataset.to_csv(os.path.join(log_dir,f"{config['paths']['task']}_dataset.csv"),index=False)
     
     # Split the dataset based on the classes, and save the val and train data as 2 csv , we will use these csv next time instead of doing a split again. 
-    train_data, val_data = split_and_save_dataset(filtered_dataset,text_target_column,config['model_training_parameters']['test_size'],config['model_training_parameters']['random_state'],log_dir,config['paths']['task'])
+    train_data, val_data = split_and_save_dataset(filtered_dataset,text_target_column,config['model_training_parameters']['test_size'],config['model_training_parameters']['random_state'],log_dir,f"text_{config['paths']['task']}")
     
     # Calculate the max words, max_sequence length , max_features, the 95 the percentile for each and log it as bar plot with the count information, and log the plot to wandb . 
     # Do a distrbution plot for each train , and test on the task columns and how many rows of text data is available for each class in the task column , the bar plot will show the count information as well , and log to wandb the plot
@@ -78,7 +78,7 @@ def main(args):
     # Also compute the confusion matrix and roc_auc , and create plots for this which is logged as wandb.Image to wandb. 
     # the model files need to be saved , so handle this as well . can create a new directory based on the task name and then save the model files there.
     # Training loop
-    model_dir =f"{config['paths']['task']}_saved_models"
+    model_dir =f"text_{config['paths']['task']}_saved_models"
     os.makedirs(model_dir, exist_ok=True)
     class_names = label_encoder.classes_.tolist()
 
@@ -89,7 +89,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="unit test for text cleaning")
-    parser.add_argument('-config', type=str,default='/home/aaimscadmin/git-repo/cloud_repo/text_classification/configs/human_config.yaml')
+    parser.add_argument('-config', type=str,default='/home/aaimscadmin/git-repo/cloud_repo/disaster_classification/configs/human_config.yaml')
     args = parser.parse_args()
     
     main(args)

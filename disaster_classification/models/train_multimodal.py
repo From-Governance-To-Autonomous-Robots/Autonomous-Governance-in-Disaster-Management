@@ -1,7 +1,6 @@
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset
+
+
 from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -10,22 +9,14 @@ import wandb
 import numpy as np
 import os
 import json
+from PIL import Image
+import torchvision.transforms as transforms
 
-class TextDataset(Dataset):
-    def __init__(self, texts, labels, original_texts):
-        self.texts = texts
-        self.labels = labels
-        self.original_texts = original_texts
-    
-    def __len__(self):
-        return len(self.texts)
-    
-    def __getitem__(self, idx):
-        return (
-            torch.tensor(self.texts[idx], dtype=torch.long),
-            torch.tensor(self.labels[idx], dtype=torch.long),
-            self.original_texts[idx]
-        )
+def denormalize(image_tensor, mean, std):
+    mean = np.array(mean).reshape(-1, 1, 1)
+    std = np.array(std).reshape(-1, 1, 1)
+    denormalized_image = image_tensor * std + mean
+    return denormalized_image
 
 def plot_confusion_matrix(cm, class_names):
     fig, ax = plt.subplots(figsize=(14, 12))
@@ -37,10 +28,10 @@ def plot_confusion_matrix(cm, class_names):
     plt.tight_layout()
     return fig
 
-def log_predictions_table(phase, texts, ground_truths, predictions, class_names):
-    table = wandb.Table(columns=["Text", "Ground Truth", "Prediction"])
-    for text, gt, pred in zip(texts, ground_truths, predictions):
-        table.add_data(text, class_names[gt], class_names[pred])
+def log_predictions_table(phase, texts, images, ground_truths, predictions, class_names):
+    table = wandb.Table(columns=["Text", "Image", "Ground Truth", "Prediction"])
+    for text, img, gt, pred in zip(texts, images, ground_truths, predictions):
+        table.add_data(text, wandb.Image(img), class_names[gt], class_names[pred])
     wandb.log({f"{phase}/sample_predictions": table})
 
 def save_metrics_report(report, save_path):
@@ -69,39 +60,25 @@ def log_classification_report(val_report, label_map):
     wandb.log({"Validation/weighted_recall": val_report['weighted avg']['recall']})
     wandb.log({"Validation/weighted_precision": val_report['weighted avg']['precision']})
 
-def train_model(model, train_data, val_data, train_labels, val_labels, original_train_texts, original_val_texts, config, save_dir, class_names):
+def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler, config, save_dir, class_names,mean,std,original_val_texts):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
-    
-    train_dataset = TextDataset(train_data, train_labels, original_train_texts)
-    val_dataset = TextDataset(val_data, val_labels, original_val_texts)
-
-    train_loader = DataLoader(train_dataset, batch_size=config['batch_size'], shuffle=True, num_workers=4, pin_memory=True)
-    val_loader = DataLoader(val_dataset, batch_size=config['batch_size'], shuffle=False, num_workers=4, pin_memory=True)
-
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.AdamW(model.parameters(), lr=config['learning_rate'])
-    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10, eta_min=0)
 
     best_val_f1 = 0.0
     best_model_path = ""
-    best_report_path = ""
-
+    
     # Save the label map
     label_map_path = os.path.join(save_dir, 'label_map.json')
     label_map = save_label_map(class_names, label_map_path)
     wandb.save(label_map_path)
 
-    # early_stopping_patience = 10
-    # early_stopping_counter = 0
-
     for epoch in range(config['num_epochs']):
         model.train()
         train_loss = 0
-        for texts, labels, orig_texts in tqdm(train_loader, desc=f"Training Epoch {epoch+1}"):
-            texts, labels = texts.to(device), labels.to(device)
+        for texts, images, labels in tqdm(train_loader, desc=f"Training Epoch {epoch+1}"):
+            texts, images, labels = texts.to(device), images.to(device), labels.to(device)
             optimizer.zero_grad()
-            outputs = model(texts)
+            outputs = model(texts, images)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
@@ -116,31 +93,37 @@ def train_model(model, train_data, val_data, train_labels, val_labels, original_
         val_targets = []
         val_preds = []
         val_texts = []
+        val_images = []
         
         with torch.no_grad():
-            for texts, labels, orig_texts in tqdm(val_loader, desc=f"Validation Epoch {epoch+1}"):
-                texts, labels = texts.to(device), labels.to(device)
-                outputs = model(texts)
+            for texts, images, labels in tqdm(val_loader, desc=f"Validation Epoch {epoch+1}"):
+                texts, images, labels = texts.to(device), images.to(device), labels.to(device)
+                outputs = model(texts, images)
                 loss = criterion(outputs, labels)
                 val_loss += loss.item()
                 val_targets.extend(labels.cpu().numpy())
                 val_preds.extend(outputs.argmax(dim=1).cpu().numpy())
-                val_texts.extend(orig_texts)
+                val_texts.extend(texts.cpu().numpy())
+                val_images.extend(images.cpu().numpy())
         
         avg_val_loss = val_loss / len(val_loader)
-        # scheduler.step()
         val_report = classification_report(val_targets, val_preds, output_dict=True)
         val_cm = confusion_matrix(val_targets, val_preds)
 
         wandb.log({"Validation/loss": avg_val_loss})
-        log_classification_report(val_report, label_map) 
+        log_classification_report(val_report, class_names)
         
         cm_fig = plot_confusion_matrix(val_cm, class_names=class_names)
         wandb.log({"Validation/confusion_matrix": wandb.Image(cm_fig)})
         plt.close(cm_fig)
         
         # Log a sample of batch predictions
-        log_predictions_table("Validation", val_texts[:10], val_targets[:10], val_preds[:10], class_names)
+        sample_texts = original_val_texts[:10]
+        # sample_texts = val_texts[:10]
+        sample_images = val_images[:10]
+        sample_images = [np.transpose(denormalize(img, mean, std), (1, 2, 0)) for img in sample_images]
+        sample_images = [(img * 255).astype(np.uint8) for img in sample_images]
+        log_predictions_table("Validation", sample_texts, sample_images, val_targets[:10], val_preds[:10], class_names)
 
         if val_report['macro avg']['f1-score'] > best_val_f1:
             best_val_f1 = val_report['macro avg']['f1-score']
@@ -149,11 +132,7 @@ def train_model(model, train_data, val_data, train_labels, val_labels, original_
             
             best_report_path = os.path.join(save_dir, 'best_metrics_report.json')
             save_metrics_report(val_report, best_report_path)
-            # early_stopping_counter = 0  # Reset the early stopping counter
-        # else:
-            # early_stopping_counter += 1
-
         
-        # if early_stopping_counter >= early_stopping_patience:
-        #     print("Early stopping triggered")
-        #     break
+        scheduler.step()
+
+    

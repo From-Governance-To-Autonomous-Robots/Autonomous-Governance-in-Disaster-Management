@@ -44,11 +44,20 @@ def main(args):
     label_encoder, train_encoded_labels = apply_label_encoding(train_data[image_target_column])
     _, val_encoded_labels = apply_label_encoding(val_data[image_target_column])
     
+    mean = [0.485, 0.456, 0.406]
+    std = [0.229, 0.224, 0.225]
     # Define image transformations
-    transform = transforms.Compose([
+    train_transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=mean, std=std)
+    ])
+
+    val_transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        transforms.Normalize(mean=mean, std=std)
     ])
     
     # Build the ResNet50 model
@@ -63,7 +72,7 @@ def main(args):
     train_image_paths = [os.path.join(config['paths']['dataset_dir_path'],file_path) for file_path in list(train_data['image_path'])]
     val_image_paths = [os.path.join(config['paths']['dataset_dir_path'],file_path) for file_path in list(val_data['image_path'])]
 
-    train_model(model, train_image_paths, val_image_paths, train_encoded_labels, val_encoded_labels, transform, config['model_training_parameters'], model_dir, class_names)
+    train_model(model, train_image_paths, val_image_paths, train_encoded_labels, val_encoded_labels, train_transform,val_transform, config['model_training_parameters'], model_dir, class_names,mean,std)
 
     wandb.finish()
 

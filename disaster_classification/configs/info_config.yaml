@@ -9,20 +9,21 @@ paths:
     - 'annotations/srilanka_floods_final_data.tsv'
   task: 'info'
   dataset_dir_path: '/home/aaimscadmin/IRP_DATA/CrisisMMD_v2.0'
-  glove_file: '/home/aaimscadmin/git-repo/cloud_repo/text_classification/glove_embeddings/glove.twitter.27B.100d.txt'
+  glove_file: '/home/aaimscadmin/git-repo/cloud_repo/disaster_classification/glove_embeddings/glove.twitter.27B.100d.txt'
 
 data:
   classes_to_drop:
     -
 
 model_training_parameters:
-  wandb_project: 'text_classification'
+  wandb_project: 'disaster_classification'
   vocab_size: 20000 
   max_seq_len: 20 # Varies per task
-  test_size: 0.3
+  test_size: 0.2
   random_state: 42
-  batch_size: 16
+  batch_size: 32
   num_epochs: 100
-  learning_rate: 0.001
-  hidden_dim: 64
+  learning_rate: 0.0001
+  hidden_dim: 128
   embedding_dim: 100
+  image_size: [224, 224]

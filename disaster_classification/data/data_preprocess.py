@@ -6,27 +6,27 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from sklearn.preprocessing import LabelEncoder
 
 def split_and_save_dataset(dataset, target_column, test_size, random_state, output_dir,task):
-    if not os.path.exists(os.path.join(output_dir, f'train_{task}_dataset.csv')):
-        train_data, val_data = train_test_split(
-            dataset, test_size=test_size, random_state=random_state, stratify=dataset[target_column]
-        )
+    # if not os.path.exists(os.path.join(output_dir, f'train_{task}_dataset.csv')):
+    train_data, val_data = train_test_split(
+        dataset, test_size=test_size, random_state=random_state, stratify=dataset[target_column]
+    )
 
-        os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
+    
+    train_path = os.path.join(output_dir, f'train_{task}_dataset.csv')
+    val_path = os.path.join(output_dir, f'val_{task}_dataset.csv')
+    
+    train_data.to_csv(train_path, index=False)
+    val_data.to_csv(val_path, index=False)
+    # else:
+    #     train_path = os.path.join(output_dir, f'train_{task}_dataset.csv')
+    #     val_path = os.path.join(output_dir, f'val_{task}_dataset.csv')
         
-        train_path = os.path.join(output_dir, f'train_{task}_dataset.csv')
-        val_path = os.path.join(output_dir, f'val_{task}_dataset.csv')
+    #     train_data = pd.read_csv(train_path)
+    #     val_data = pd.read_csv(val_path)
         
-        train_data.to_csv(train_path, index=False)
-        val_data.to_csv(val_path, index=False)
-    else:
-        train_path = os.path.join(output_dir, f'train_{task}_dataset.csv')
-        val_path = os.path.join(output_dir, f'val_{task}_dataset.csv')
-        
-        train_data = pd.read_csv(train_path)
-        val_data = pd.read_csv(val_path)
-        
-    print(f"Training data saved to {train_path}")
-    print(f"Validation data saved to {val_path}")
+    # print(f"Training data saved to {train_path}")
+    # print(f"Validation data saved to {val_path}")
     
     return train_data, val_data
 
