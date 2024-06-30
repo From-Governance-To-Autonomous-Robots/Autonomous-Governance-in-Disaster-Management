@@ -13,6 +13,19 @@ paths:
     - 'destroyed'
   label_file_prefix: 'targets'
 
+original_data:
+  root_dir: "/home/aaimscadmin/IRP_DATA/XBD"
+  train_directory: "/home/aaimscadmin/IRP_DATA/XBD/train_images_labels_targets/train"
+  val_directory: "/home/aaimscadmin/IRP_DATA/XBD/test_images_labels_targets/test"
+  label_folder_prefix: 'targets'
+  label_file_suffix: 'target'
+  gt_labels:
+    - 'no_damage'
+    - 'minor_damage'
+    - 'major_damage'
+    - 'destroyed'
+  patch_size: 256
+
 model_training_parameters:
   wandb_project: 'post_disaster_classification'
   classes_to_ignore:
