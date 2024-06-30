@@ -65,7 +65,11 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
     model.to(device)
 
     best_val_f1 = 0.0
+    best_val_loss = np.inf
+    best_model_epoch = 0
     best_model_path = ""
+    patience = 5
+    remaining_before_early_stopping = 0
     
     # Save the label map
     label_map_path = os.path.join(save_dir, 'label_map.json')
@@ -105,8 +109,8 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
                 val_preds.extend(outputs.argmax(dim=1).cpu().numpy())
                 val_texts.extend(texts.cpu().numpy())
                 val_images.extend(images.cpu().numpy())
-        
         avg_val_loss = val_loss / len(val_loader)
+        scheduler.step(avg_val_loss)
         val_report = classification_report(val_targets, val_preds, output_dict=True)
         val_cm = confusion_matrix(val_targets, val_preds)
 
@@ -125,14 +129,21 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
         sample_images = [(img * 255).astype(np.uint8) for img in sample_images]
         log_predictions_table("Validation", sample_texts, sample_images, val_targets[:10], val_preds[:10], class_names)
 
-        if val_report['macro avg']['f1-score'] > best_val_f1:
-            best_val_f1 = val_report['macro avg']['f1-score']
-            best_model_path = os.path.join(save_dir, 'best_model.pth')
-            torch.save(model.state_dict(), best_model_path)
-            
-            best_report_path = os.path.join(save_dir, 'best_metrics_report.json')
-            save_metrics_report(val_report, best_report_path)
+        if remaining_before_early_stopping <= patience:
+            remaining_before_early_stopping += 1
+            if (val_report['macro avg']['f1-score'] > best_val_f1) and (avg_val_loss < best_val_loss) and (avg_val_loss >= avg_train_loss):
+                best_model_epoch = epoch
+                best_val_f1 = val_report['macro avg']['f1-score']
+                best_val_loss = avg_val_loss
+                best_model_path = os.path.join(save_dir, 'best_model.pth')
+                torch.save(model.state_dict(), best_model_path)
+                
+                best_report_path = os.path.join(save_dir, 'best_metrics_report.json')
+                save_metrics_report(val_report, best_report_path)
+                
         
-        scheduler.step()
-
-    
+        if remaining_before_early_stopping > patience:
+            print(f'Early Stopping @ {epoch}')
+            print(f'Best Model Saved @ {best_model_epoch}')
+            print(f'Best Val Loss @ {best_val_loss}')
+            break

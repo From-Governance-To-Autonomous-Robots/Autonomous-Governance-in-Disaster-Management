@@ -11,12 +11,15 @@ paths:
     - 'minor_damage'
     - 'major_damage'
     - 'destroyed'
-
+  label_file_prefix: 'targets'
 
 model_training_parameters:
   wandb_project: 'post_disaster_classification'
+  classes_to_ignore:
+    - 
   test_size: 0.3
   random_state: 42
   batch_size: 32
   num_epochs: 100
   learning_rate: 0.001
+  permited_background_thresh: 0.8

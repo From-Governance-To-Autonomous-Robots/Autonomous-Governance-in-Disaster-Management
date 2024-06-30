@@ -13,16 +13,20 @@ paths:
 
 data:
   classes_to_drop:
-    -
-
+    - 
+  classes_to_relabel: {
+    "mild_damage" : "little_or_no_damage"
+  }
 model_training_parameters:
   wandb_project: 'disaster_classification'
-  vocab_size: 20000 
+  vocab_size: 10000 
   max_seq_len: 20 # Varies per task
-  test_size: 0.3
+  test_size: 0.2
   random_state: 42
-  batch_size: 16
+  batch_size: 32
   num_epochs: 100
-  learning_rate: 0.0005
-  hidden_dim: 64
+  learning_rate: 0.0001
+  hidden_dim: 128
   embedding_dim: 100
+  image_size: [224, 224]
+  

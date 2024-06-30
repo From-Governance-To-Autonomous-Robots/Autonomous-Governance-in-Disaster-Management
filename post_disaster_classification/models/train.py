@@ -33,13 +33,32 @@ def denormalize(image_tensor, mean, std):
     denormalized_image = image_tensor * std + mean
     return denormalized_image
 
+def log_classification_report(val_report, label_map):
+    for key, value in val_report.items():
+        if key.isdigit():
+            class_name = label_map[int(key)]
+            wandb.log({f"Validation/{class_name}_f1_score": value['f1-score']})
+            wandb.log({f"Validation/{class_name}_precision": value['precision']})
+            wandb.log({f"Validation/{class_name}_recall": value['recall']})
+
+    wandb.log({"Validation/accuracy": val_report['accuracy']})
+    wandb.log({"Validation/macro_f1_score": val_report['macro avg']['f1-score']})
+    wandb.log({"Validation/macro_recall": val_report['macro avg']['recall']})
+    wandb.log({"Validation/macro_precision": val_report['macro avg']['precision']})
+    wandb.log({"Validation/weighted_f1_score": val_report['weighted avg']['f1-score']})
+    wandb.log({"Validation/weighted_recall": val_report['weighted avg']['recall']})
+    wandb.log({"Validation/weighted_precision": val_report['weighted avg']['precision']})
+
 def train_model(model, train_loader, val_loader, criterion, optimizer, config, save_dir, class_names, mean, std):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.to(device)
     
     best_val_f1 = 0.0
+    best_val_loss = np.inf
+    best_model_epoch = 0
     best_model_path = ""
-    best_report_path = ""
+    patience = 5
+    remaining_before_early_stopping = 0
 
     for epoch in range(config['num_epochs']):
         model.train()
@@ -80,10 +99,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, config, s
         val_cm = confusion_matrix(val_targets, val_preds)
 
         wandb.log({"Validation/loss": avg_val_loss})
-        wandb.log({"Validation/accuracy": val_report['accuracy']})
-        wandb.log({"Validation/f1_score": val_report['weighted avg']['f1-score']})
-        wandb.log({"Validation/recall": val_report['weighted avg']['recall']})
-        wandb.log({"Validation/precision": val_report['weighted avg']['precision']})
+        log_classification_report(val_report, class_names)
         
         cm_fig = plot_confusion_matrix(val_cm, class_names=class_names)
         wandb.log({"Validation/confusion_matrix": wandb.Image(cm_fig)})
@@ -93,18 +109,24 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, config, s
         sample_images = [np.transpose(denormalize(img, mean, std), (1, 2, 0)) for img in sample_images]
         sample_images = [(img * 255).astype(np.uint8) for img in sample_images]
         log_predictions_table("Validation", sample_images, val_targets[:10], val_preds[:10], class_names)
-        
-        # epoch_model_path = os.path.join(save_dir, f'model_epoch_{epoch+1}.pth')
-        # torch.save(model.state_dict(), epoch_model_path)
-        # wandb.log({"epoch_model_path": epoch_model_path})
 
-        if val_report['weighted avg']['f1-score'] > best_val_f1:
-            best_val_f1 = val_report['weighted avg']['f1-score']
-            best_model_path = os.path.join(save_dir, 'best_model.pth')
-            torch.save(model.state_dict(), best_model_path)
-            
-            best_report_path = os.path.join(save_dir, 'best_metrics_report.json')
-            save_metrics_report(val_report, best_report_path)
-        
-        # wandb.log({"best_model_path": best_model_path})
-        # wandb.log({"best_report_path": best_report_path})
+        if remaining_before_early_stopping <= patience:
+            remaining_before_early_stopping +=1
+            if (val_report['macro avg']['f1-score'] > best_val_f1) and (avg_val_loss < best_val_loss) and (avg_val_loss >= avg_train_loss):
+                best_model_epoch = epoch
+                best_val_f1 = val_report['macro avg']['f1-score']
+                best_val_loss = avg_val_loss
+                best_model_path = os.path.join(save_dir, 'best_model.pth')
+                torch.save(model.state_dict(), best_model_path)
+                
+                best_report_path = os.path.join(save_dir, 'best_metrics_report.json')
+                save_metrics_report(val_report, best_report_path)
+
+        if remaining_before_early_stopping > patience:
+            if best_val_loss < np.inf:
+                print(f'Early Stopping @ {epoch}')
+                print(f'Best Model Saved @ {best_model_epoch}')
+                print(f'Best Val Loss @ {best_val_loss}')
+                break
+            else:
+                remaining_before_early_stopping = 0

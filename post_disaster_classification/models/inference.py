@@ -6,13 +6,13 @@ from PIL import Image
 import os
 import json
 import numpy as np
+from models.resnet import CustomResNet
 import torchvision.models as models
 
-def load_model(model_path, num_classes):
-    model = models.resnet50(pretrained=False)
-    num_ftrs = model.fc.in_features
-    model.fc = torch.nn.Linear(num_ftrs, num_classes)
-    model.load_state_dict(torch.load(model_path))
+def load_model(model_path, num_classes, device):
+    model = CustomResNet(num_classes)
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.to(device)
     model.eval()
     return model
 
@@ -33,9 +33,12 @@ def run_inference(model, image_path, transform, class_mapping, device):
     image_tensor = transform(image).unsqueeze(0).to(device)
     outputs = model(image_tensor)
     probabilities = torch.nn.functional.softmax(outputs[0], dim=0)
-    top5_prob, top5_catid = torch.topk(probabilities, 5)
-    top5_labels = [class_mapping[catid.item()] for catid in top5_catid]
-    return image, top5_labels, top5_prob.cpu().numpy()
+
+    # Get the top k predictions, where k is the minimum of 5 and the number of classes
+    k = min(5, len(class_mapping))
+    top_prob, top_catid = torch.topk(probabilities, k)
+    top_labels = [class_mapping[catid.item()] for catid in top_catid]
+    return image, top_labels, top_prob.cpu().detach().numpy()
 
 def get_mask_labels(mask, labels):
     unique_labels = np.unique(mask)
@@ -43,13 +46,15 @@ def get_mask_labels(mask, labels):
     return label_names
 
 def plot_predictions(image, top5_labels, top5_prob, mask_image, mask_labels, title):
-    fig, ax = plt.subplots(1, 2, figsize=(14, 7))
+    fig, ax = plt.subplots(1, 2, figsize=(14, 10))
     
     ax[0].imshow(image)
     ax[0].set_title("Image with Top-5 Predictions")
     ax[0].axis('off')
+
+    # Position the text below the image
     for i, (label, prob) in enumerate(zip(top5_labels, top5_prob)):
-        ax[0].text(0, (i + 1) * 25, f"{label}: {prob:.2f}", color='red', fontsize=12, backgroundcolor='white')
+        ax[0].text(0, 1.1 - (i + 1) * 0.1, f"{label}: {prob:.2f}", transform=ax[0].transAxes, fontsize=12, color='red', backgroundcolor='white')
 
     ax[1].imshow(mask_image, cmap='tab10')
     ax[1].set_title("Ground Truth Mask")
@@ -70,7 +75,7 @@ def evaluate_and_log(config, model, class_mapping, device):
 
     for image_name in os.listdir(image_dir):
         image_path = os.path.join(image_dir, image_name)
-        mask_path = os.path.join(mask_dir, image_name)
+        mask_path = os.path.join(mask_dir, image_name.split('.')[0] + f"_{config['paths']['label_file_prefix']}.png")
 
         image, top5_labels, top5_prob = run_inference(model, image_path, transform, class_mapping, device)
         

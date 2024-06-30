@@ -18,11 +18,22 @@ paths:
     - 'road_blocked'
     - 'tree'
     - 'pool'
+  label_file_prefix: 'lab'
 
 model_training_parameters:
   wandb_project: 'post_disaster_classification'
-  test_size: 0.3
+  classes_to_ignore:
+    - background
+    - pool
+    - tree
+    - vehicle 
+    - water
+    - road_clear
+    - road_blocked
+  test_size: 0.2
   random_state: 42
-  batch_size: 32
+  batch_size: 16
   num_epochs: 100
-  learning_rate: 0.001
+  learning_rate: 0.0001
+  permited_background_thresh: 0.8
+

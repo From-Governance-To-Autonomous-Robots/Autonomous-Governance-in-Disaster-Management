@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 from utils.utils import load_config, plot_class_distribution,save_class_labels_mapping
 from data.dataset import CustomImageDataset
-from models.resnet import get_resnet50_model
+from models.resnet import CustomResNet
 from models.train import train_model
 from models.inference import load_model,get_class_labels_mapping,evaluate_and_log
 
@@ -37,12 +37,12 @@ def main(args):
     # Load datasets
     train_dataset_dir = os.path.join(config['paths']['dataset_dir_path'],config['paths']['phases'][0])
     val_dataset_dir = os.path.join(config['paths']['dataset_dir_path'], config['paths']['phases'][1])
-    train_dataset = CustomImageDataset(train_dataset_dir, transform=train_transform)
-    val_dataset = CustomImageDataset(val_dataset_dir, transform=val_transform)
+    train_dataset = CustomImageDataset(train_dataset_dir, transform=train_transform,ignore_classes=config['model_training_parameters']['classes_to_ignore'],permitted_background_thresh=config['model_training_parameters']['permited_background_thresh'])
+    val_dataset = CustomImageDataset(val_dataset_dir, transform=val_transform,ignore_classes=config['model_training_parameters']['classes_to_ignore'],permitted_background_thresh=config['model_training_parameters']['permited_background_thresh'])
     
     # Plot class distribution
-    plot_class_distribution(train_dataset_dir, "Train Class Distribution", "Train/class_distribution")
-    plot_class_distribution(val_dataset_dir, "Validation Class Distribution", "Validation/class_distribution")
+    plot_class_distribution(train_dataset, "Train Class Distribution", "Train/class_distribution")
+    plot_class_distribution(val_dataset, "Validation Class Distribution", "Validation/class_distribution")
 
     # Save class labels mapping
     labels_mapping_path = os.path.join(model_dir, 'class_labels_mapping.json')
@@ -54,22 +54,23 @@ def main(args):
     val_loader = DataLoader(val_dataset, batch_size=config['model_training_parameters']['batch_size'], shuffle=False, num_workers=4, pin_memory=True)
     
     # Define the model
-    model = get_resnet50_model(len(train_dataset.classes))
+    model = CustomResNet(len(train_dataset.classes))
     
     # Define the loss function and optimizer
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=config['model_training_parameters']['learning_rate'])
+    optimizer = torch.optim.AdamW(model.parameters(), lr=config['model_training_parameters']['learning_rate'])
     
     # Train the model
     train_model(model, train_loader, val_loader, criterion, optimizer, config['model_training_parameters'], model_dir, train_dataset.classes,mean=mean, std=std)
 
     # Load the best model for evaluation
+    device='cuda' if torch.cuda.is_available() else 'cpu'
     best_model_path = os.path.join(model_dir, 'best_model.pth')
-    model = load_model(best_model_path, len(train_dataset.classes))
+    model = load_model(best_model_path, len(train_dataset.classes),device)
     class_mapping = get_class_labels_mapping(labels_mapping_path)
 
     # Run evaluation and log results to wandb
-    evaluate_and_log(config, model, class_mapping, device='cuda' if torch.cuda.is_available() else 'cpu')
+    evaluate_and_log(config, model, class_mapping,device )
     
     wandb.finish()
 

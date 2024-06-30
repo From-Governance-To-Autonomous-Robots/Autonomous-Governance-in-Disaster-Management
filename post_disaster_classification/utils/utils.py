@@ -10,12 +10,14 @@ def load_config(config_path):
         config = yaml.safe_load(file)
     return config
 
-def plot_class_distribution(data_dir, title, wandb_log_key):
+def plot_class_distribution(dataset, title, wandb_log_key):
     class_counts = {}
-    for class_name in os.listdir(data_dir):
-        class_dir = os.path.join(data_dir, class_name)
-        if os.path.isdir(class_dir):
-            class_counts[class_name] = len(os.listdir(class_dir))
+    
+    for _, cls in dataset.files:
+        if cls in class_counts:
+            class_counts[cls] += 1
+        else:
+            class_counts[cls] = 1
     
     class_names = list(class_counts.keys())
     class_values = list(class_counts.values())
