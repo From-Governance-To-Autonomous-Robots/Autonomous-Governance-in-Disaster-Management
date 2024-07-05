@@ -3,6 +3,9 @@ from torch.utils.data import Dataset
 from PIL import Image
 import torchvision.transforms as transforms
 import numpy as np 
+import pandas as pd
+import torch
+import pdb
 
 class CustomImageDataset(Dataset):
     def __init__(self, data_dir, transform=None,ignore_classes=None,permitted_background_thresh=0.8):
@@ -40,3 +43,51 @@ class CustomImageDataset(Dataset):
             image = self.transform(image)
         label = self.classes.index(cls)
         return image, label
+
+
+class MultiLabelDataset(Dataset):
+    def __init__(self, csv_file, transform=None, combine_class=None,ignore_classes=None,save_dir='somthing'):
+        self.data = pd.read_csv(csv_file)
+        self.transform = transform
+        self.combine_class = combine_class
+        self.ignore_classes = ignore_classes
+        self.classes = list(self.data.columns[1:])
+        
+        if ignore_classes:
+            self._ignore_classes()
+        
+        if combine_class:
+            self._combine_classes()
+        
+        self.data.to_csv(save_dir,index=False)
+
+        # # Ensure all label columns are numeric and convert them to integers
+        # for cls in self.classes:
+        #     self.data[cls] = pd.to_numeric(self.data[cls], errors='coerce').fillna(0).astype(int)
+
+    def _combine_classes(self):
+        for key, value in self.combine_class.items():
+            if key in self.data.columns and value in self.data.columns:
+                self.data.loc[self.data[key] == 1, value] = 1
+                self.data.drop(columns=[key], inplace=True)
+        self.classes = list(self.data.columns[1:])  # Update classes after combining
+    
+    def _ignore_classes(self):
+        if len(self.ignore_classes) > 0:
+            for value in self.ignore_classes:
+                self.data.drop(columns=[value], inplace=True)
+        self.classes = list(self.data.columns[1:])  # Update classes after dropping
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        img_path = self.data.iloc[idx, 0]
+        image = Image.open(img_path).convert("RGB")
+        labels = self.data.iloc[idx, 1:].values.astype(np.float32)
+        labels = torch.tensor(labels, dtype=torch.float32)
+
+        if self.transform:
+            image = self.transform(image)
+
+        return image, labels

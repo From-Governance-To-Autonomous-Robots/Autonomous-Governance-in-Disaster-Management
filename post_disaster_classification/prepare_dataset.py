@@ -7,7 +7,7 @@ def main(args):
     config = load_config(args.config)
     
     # create multilabel_dataset directories 
-    multi_label_dir = os.path.join(config['original_data']['root_dir'],'multi_label_dataset')
+    multi_label_dir = os.path.join(config['original_data']['root_dir'],'blurred_multilabel_dataset')
     os.makedirs(multi_label_dir,exist_ok=True)
     train_multi_dir = os.path.join(multi_label_dir,'train')
     os.makedirs(train_multi_dir,exist_ok=True)
@@ -31,10 +31,11 @@ def main(args):
         phase='val'
     )
     
+    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="prepare dataset for multilabel classification")
-    parser.add_argument('-config',type=str)
+    parser.add_argument('-config',type=str,default="/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/post_disaster_classification/configs/drone_config.yaml")
     args = parser.parse_args()
     
     main(args)

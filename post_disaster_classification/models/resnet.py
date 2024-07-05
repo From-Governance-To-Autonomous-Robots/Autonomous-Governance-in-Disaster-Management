@@ -18,3 +18,15 @@ class CustomResNet(nn.Module):
 
     def forward(self, x):
         return self.base_model(x)
+    
+
+class MultiLabelResNet(nn.Module):
+    def __init__(self, base_model, num_classes):
+        super(MultiLabelResNet, self).__init__()
+        self.base_model = base_model
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        x = self.base_model(x)
+        x = self.sigmoid(x)
+        return x
