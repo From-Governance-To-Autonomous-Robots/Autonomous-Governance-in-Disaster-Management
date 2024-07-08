@@ -6,7 +6,7 @@ paths:
     - 'val'
 
 original_data:
-  root_dir: "/home/julian/datasets/RescueNet"
+  root_dir: "/home/docsun/Documents/git-repo/juliangdz/Dataset/RescueNet/blurred_multilabel_dataset"
   train_directory: "/home/julian/datasets/RescueNet/train"
   val_directory: "/home/julian/datasets/RescueNet/val"
   label_folder_prefix: 'targets'
@@ -28,10 +28,14 @@ original_data:
 
 model_training_parameters:
   wandb_project: 'post_disaster_classification'
-  # classes_to_ignore:
-  #   - no_damage
+  classes_to_ignore:
+    - background
+    - water
+    - vehicle
+    - tree
+    - pool
   # combine_classes: {
-  #   "minor_damage" : "major_damage",
+  #   "building_" : "major_damage",
   #   "destroyed" : "major_damage"
   # }
   random_state: 42

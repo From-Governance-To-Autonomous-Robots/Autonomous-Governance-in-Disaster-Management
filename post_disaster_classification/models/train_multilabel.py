@@ -118,7 +118,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, config, s
 
         if remaining_before_early_stopping <= patience:
             remaining_before_early_stopping +=1
-            if (val_f1 >= best_val_f1) and (avg_val_loss < best_val_loss) and (avg_val_loss > avg_train_loss):
+            if (val_f1 >= best_val_f1) and (avg_val_loss < best_val_loss):
                 best_model_epoch = epoch
                 best_val_f1 = val_f1
                 best_val_loss = avg_val_loss

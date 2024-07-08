@@ -37,8 +37,8 @@ def main(args):
     os.makedirs(model_dir, exist_ok=True)
     
     # Load datasets
-    train_csv_path = os.path.join(config['original_data']['root_dir'],'blurred_multilabel_dataset','train','logs/dataset.csv')
-    val_csv_path = os.path.join(config['original_data']['root_dir'],'blurred_multilabel_dataset','val','logs/dataset.csv')
+    train_csv_path = os.path.join(config['original_data']['root_dir'],'train','logs/dataset.csv')
+    val_csv_path = os.path.join(config['original_data']['root_dir'],'val','logs/dataset.csv')
     
     if 'combine_classes' in config['model_training_parameters'] and config['model_training_parameters']['combine_classes']:
         combine_classes = config['model_training_parameters']['combine_classes']
