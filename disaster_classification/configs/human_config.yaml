@@ -8,7 +8,7 @@ paths:
     - 'annotations/mexico_earthquake_final_data.tsv'
     - 'annotations/srilanka_floods_final_data.tsv'
   task: 'human'
-  dataset_dir_path: '/home/aaimscadmin/IRP_DATA/CrisisMMD_v2.0'
+  dataset_dir_path: '/home/julian/datasets/crisis_mmd'
   glove_file: '/home/aaimscadmin/git-repo/cloud_repo/disaster_classification/glove_embeddings/glove.twitter.27B.100d.txt'
 
 data:

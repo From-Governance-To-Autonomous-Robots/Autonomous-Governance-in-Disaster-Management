@@ -1,5 +1,16 @@
 {
   "projects": {
-    "default": "disaster-master-59d6f"
-  }
+    "default": "disaster-maestro"
+  },
+  "targets": {
+    "disaster-master-59d6f": {
+      "hosting": {
+        "prod": [
+          "disaster-maestro"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }

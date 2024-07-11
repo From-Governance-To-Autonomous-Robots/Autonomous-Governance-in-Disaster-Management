@@ -1,10 +1,11 @@
 import React from 'react';
+import Score from '../components/Score';
 
 const ResultPage = () => {
   return (
     <div>
       <h2>Your results</h2>
-      {/* Add result details here */}
+      <Score/>
     </div>
   );
 };

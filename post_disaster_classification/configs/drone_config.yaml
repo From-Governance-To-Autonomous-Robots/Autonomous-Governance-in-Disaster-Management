@@ -6,7 +6,7 @@ paths:
     - 'val'
 
 original_data:
-  root_dir: "/home/docsun/Documents/git-repo/juliangdz/Dataset/RescueNet/blurred_multilabel_dataset"
+  root_dir: "/home/docsun/Datasets/RescueNet/blurred_multilabel_dataset"
   train_directory: "/home/julian/datasets/RescueNet/train"
   val_directory: "/home/julian/datasets/RescueNet/val"
   label_folder_prefix: 'targets'
@@ -34,12 +34,13 @@ model_training_parameters:
     - vehicle
     - tree
     - pool
-  # combine_classes: {
-  #   "building_" : "major_damage",
-  #   "destroyed" : "major_damage"
-  # }
+    - road_clear
+    - road_blocked
+  combine_classes: {
+    "building_major_damage" : "building_destroyed",
+    "building_minor_damage" : "building_no_damage"
+  }
   random_state: 42
   batch_size: 16
   num_epochs: 100
-  learning_rate: 0.001
-
+  learning_rate: 0.0001

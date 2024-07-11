@@ -1,13 +1,12 @@
 import os
 import argparse
-from data.patching_logic import process_and_patch_images
 from utils.utils import load_config
 
 def main(args):
     config = load_config(args.config)
     
     # create multilabel_dataset directories 
-    multi_label_dir = os.path.join(config['original_data']['root_dir'],'blurred_multilabel_dataset')
+    multi_label_dir = os.path.join(config['original_data']['root_dir'],'multilabel_dataset')
     os.makedirs(multi_label_dir,exist_ok=True)
     train_multi_dir = os.path.join(multi_label_dir,'train')
     os.makedirs(train_multi_dir,exist_ok=True)
@@ -15,6 +14,11 @@ def main(args):
     os.makedirs(val_multi_dir,exist_ok=True)
     
     # process and create the datasets - patch and store csv 
+    if (config['paths']['task']).startswith('drone_'):
+        from data.drone_patching_logic import process_and_patch_images 
+    else:
+        from data.patching_logic import process_and_patch_images
+    
     process_and_patch_images(
         config=config,
         output_directory=train_multi_dir,

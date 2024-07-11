@@ -159,7 +159,7 @@ logs*
 *_saved_models/
 glove_embeddings/
 
-disaster-master.json
+*disaster-master.json
 *.env
 
 # PyCharm
