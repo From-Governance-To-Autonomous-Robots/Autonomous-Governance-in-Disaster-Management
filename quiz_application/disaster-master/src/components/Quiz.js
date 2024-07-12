@@ -194,7 +194,12 @@ const Quiz = ({ task, phase }) => {
     });
     
     const { path, state } = checkNavigationHelper("info", phase);
-    navigate(userDocData.validation_pending === 0 ? "/results" : path, { state });
+    if (task == "info"){
+      navigate('/loading', { state: { task: "info", phase: phase } });
+    }
+    else{
+      navigate(userDocData.validation_pending === 0 ? "/results" : path, { state });
+    }
   };
   
   const updateUserDoc = async (userDoc, updates) => {
