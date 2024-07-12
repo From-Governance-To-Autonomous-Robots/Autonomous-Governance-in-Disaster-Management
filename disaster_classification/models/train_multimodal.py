@@ -1,6 +1,5 @@
 import torch
-
-
+import pandas as pd
 from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -147,3 +146,48 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
             print(f'Best Model Saved @ {best_model_epoch}')
             print(f'Best Val Loss @ {best_val_loss}')
             break
+
+
+def run_inference(model, train_loader, val_loader, criterion, optimizer, scheduler, config, save_dir, class_names,mean,std,original_val_texts):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device)
+
+    model.eval()
+    train_dataset_infer = []
+    val_dataset_infer = []
+    with torch.no_grad():
+        for texts, images, labels, img_path,tweet_text in tqdm(train_loader, desc=f"Running Inference on training data"):
+            texts, images, labels = texts.to(device), images.to(device), labels.to(device)
+            outputs = model(texts, images)
+            _, predictions = torch.max(outputs, 1)
+            prediction_conf = torch.softmax(outputs, dim=1).cpu().numpy()
+            for i in range(len(labels)):
+                row = {
+                    "tweet_text": tweet_text[i],
+                    "img_path": img_path[i],
+                    "prediction": predictions[i].cpu().numpy(),
+                    "ground_truth": labels[i].cpu().numpy(),
+                    "prediction_conf": prediction_conf[i]
+                }
+                train_dataset_infer.append(row)
+        
+        for texts, images, labels, img_path,tweet_text in tqdm(val_loader, desc=f"Running Inference on validation data"):
+            texts, images, labels = texts.to(device), images.to(device), labels.to(device)
+            outputs = model(texts, images)
+            _, predictions = torch.max(outputs, 1)
+            prediction_conf = torch.softmax(outputs, dim=1).cpu().numpy()
+            for i in range(len(labels)):
+                row = {
+                    "tweet_text": tweet_text[i],
+                    "img_path": img_path[i],
+                    "prediction": predictions[i].cpu().numpy(),
+                    "ground_truth": labels[i].cpu().numpy(),
+                    "prediction_conf": prediction_conf[i]
+                }
+                val_dataset_infer.append(row)
+                
+    # Save inference results to CSV
+    train_df = pd.DataFrame(train_dataset_infer)
+    val_df = pd.DataFrame(val_dataset_infer)
+    train_df.to_csv(os.path.join(save_dir, "train_inference_results.csv"), index=False)
+    val_df.to_csv(os.path.join(save_dir, "val_inference_results.csv"), index=False)

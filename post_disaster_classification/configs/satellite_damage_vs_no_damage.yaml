@@ -30,3 +30,6 @@ model_training_parameters:
   batch_size: 16
   num_epochs: 100
   learning_rate: 0.001
+
+inference:
+  model_path: "/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/post_disaster_classification/satellite_damage_vs_no_damage_saved_models/best_model.pth"

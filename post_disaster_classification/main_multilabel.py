@@ -49,7 +49,6 @@ def main(args):
         classes_to_ignore = config['model_training_parameters']['classes_to_ignore']
     else:
         classes_to_ignore = None
-    print('Combine CLasses : ',combine_classes)
     train_dataset = MultiLabelDataset(train_csv_path, transform=train_transform,combine_class=combine_classes,ignore_classes=classes_to_ignore,save_dir=os.path.join(model_dir,f"train_{config['paths']['task']}.csv"))
     val_dataset = MultiLabelDataset(val_csv_path, transform=val_transform,combine_class=combine_classes,ignore_classes=classes_to_ignore,save_dir=os.path.join(model_dir,f"val_{config['paths']['task']}.csv"))
     

@@ -1,17 +1,17 @@
 import re
 import os
 import pandas as pd
-from spellchecker import SpellChecker
+# from spellchecker import SpellChecker
 from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
+# from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
 class TextCleaning:
     
     def __init__(self):
-        self.spell = SpellChecker()
+        # self.spell = SpellChecker()
         self.stop_words = set(stopwords.words('english'))
-        self.lemmatizer = WordNetLemmatizer()
+        # self.lemmatizer = WordNetLemmatizer()
         self.contraction_dict = {
             "ain't": "is not", "aren't": "are not", "can't": "cannot", "'cause": "because", 
             "could've": "could have", "couldn't": "could not", "didn't": "did not", "doesn't": "does not",
@@ -85,24 +85,24 @@ class TextCleaning:
             return self.contraction_dict[match.group(0)]
         return self.contractions_re.sub(replace, text)
     
-    def spell_check(self, text):
-        corrected_text = []
-        for word in text.split():
-            corrected_word = self.spell.correction(word)
-            if corrected_word is None:
-                corrected_word = word  # If correction is None, keep the original word
-            corrected_text.append(corrected_word)
-        return ' '.join(corrected_text)
+    # def spell_check(self, text):
+    #     corrected_text = []
+    #     for word in text.split():
+    #         corrected_word = self.spell.correction(word)
+    #         if corrected_word is None:
+    #             corrected_word = word  # If correction is None, keep the original word
+    #         corrected_text.append(corrected_word)
+    #     return ' '.join(corrected_text)
     
     def remove_stopwords(self, text):
         tokens = word_tokenize(text)
         tokens = [word for word in tokens if word not in self.stop_words]
         return ' '.join(tokens)
     
-    def lemmatize(self, text):
-        tokens = word_tokenize(text)
-        tokens = [self.lemmatizer.lemmatize(word) for word in tokens]
-        return ' '.join(tokens)
+    # def lemmatize(self, text):
+    #     tokens = word_tokenize(text)
+    #     tokens = [self.lemmatizer.lemmatize(word) for word in tokens]
+    #     return ' '.join(tokens)
 
 # Ensure required NLTK data is downloaded
 import nltk

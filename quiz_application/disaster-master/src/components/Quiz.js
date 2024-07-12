@@ -12,32 +12,30 @@ import { checkNavigationHelper } from '../services/navigationHelper';
 
 const MAPPING_DICT = {
   "info": {
-    0: "Actionable Data",
-    1: "No Response Necessary",
-    100: "c"
+    0: "Informative",
+    1: "Not-Informative",
+    100: "Gather Additional Data"
   },
   "human": {
-    0: "Actionable Data",
-    1: "Actionable Data",
-    2: "Actionable Data",
-    3: "Actionable Data",
-    4: "No Response Necessary",
+    0: "Affected Individuals",
+    1: "Infrastructure and Utility Damage",
+    2: "Other Relevant Information",
+    3: "Rescue Volunteering or Donation Effort",
     100: "Gather Additional Data"
   },
   "damage": {
-    0: "Actionable Data",
-    1: "Actionable Data",
-    2: "No Response Necessary",
+    0: "Little or No Damage",
+    1: "Severe Damage",
     100: "Gather Additional Data"
   },
   "satellite": {
-    0: "No Response Necessary",
-    1: "Actionable Data",
+    0: "No Damage",
+    1: "Major Damage",
     100: "Gather Additional Data"
   },
   "drone-damage": {
-    0: "No Response Necessary",
-    1: "Actionable Data",
+    0: "No Damage",
+    1: "Damaged",
     100: "Gather Additional Data"
   }
 }
@@ -112,7 +110,7 @@ const Quiz = ({ task, phase }) => {
       handleCorrectAnswer(userDoc, userDocData, question, userAnswer, currentTree);
     } else if (userAnswer === "Gather Additional Data") {
       handleGatherAdditionalData(userDoc, userDocData, question, userAnswer, currentTree);
-    } else if (userAnswer === "No Response Necessary") {
+    } else { // wrong answer
       handleNoResponseNecessary(userDoc, userDocData, question, userAnswer, currentTree);
     }
     
@@ -182,7 +180,7 @@ const Quiz = ({ task, phase }) => {
       });
     }
   
-    currentTree.points.push(0);
+    currentTree.points.push(-5);
     currentTree.tree[task].question_id.push(question.question_id);
     currentTree.tree[task].user_answer.push(userAnswer);
   
@@ -248,6 +246,8 @@ const Quiz = ({ task, phase }) => {
       <Question
         question={storedQuestion}
         handleAnswer={handleAnswer}
+        mappingDict={MAPPING_DICT}
+        task={task}
       />
     </div>
   );

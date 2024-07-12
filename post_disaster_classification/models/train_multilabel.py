@@ -9,6 +9,7 @@ import numpy as np
 import os
 import json
 import pdb
+import pandas as pd
 
 def plot_confusion_matrix(cm, class_names, title_prefix="Confusion Matrix"):
     figs = []
@@ -136,3 +137,51 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, config, s
                 break
             else:
                 remaining_before_early_stopping = 0
+                
+def run_inference(model, train_loader, val_loader, criterion, optimizer, config, save_dir, class_names, mean, std):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device)
+    
+    model.eval()
+    train_infer_data = []
+    val_infer_data = []
+    
+    with torch.no_grad():
+        for images, labels, img_path in tqdm(train_loader, desc="Running Inference on Train Data"):
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            predictions = (outputs.sigmoid() > 0.5).int()
+            prediction_conf = outputs.sigmoid().cpu().numpy()
+            
+            for i in range(len(labels)):
+                row = {
+                    "tweet_text": "",
+                    "img_path": img_path[i],
+                    "prediction": predictions[i].cpu().numpy(),
+                    "ground_truth": labels[i].cpu().numpy(),
+                    "prediction_conf": prediction_conf[i]
+                }
+                train_infer_data.append(row)
+        
+        for images, labels, img_path in tqdm(val_loader, desc="Running Inference on Validation Data"):
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            predictions = (outputs.sigmoid() > 0.5).int()
+            prediction_conf = outputs.sigmoid().cpu().numpy()
+            
+            for i in range(len(labels)):
+                row = {
+                    "tweet_text": "",
+                    "img_path": img_path[i],
+                    "prediction": predictions[i].cpu().numpy(),
+                    "ground_truth": labels[i].cpu().numpy(),
+                    "prediction_conf": prediction_conf[i]
+                }
+                val_infer_data.append(row)
+    
+    # Save inference results to CSV
+    train_df = pd.DataFrame(train_infer_data)
+    val_df = pd.DataFrame(val_infer_data)
+    
+    train_df.to_csv(os.path.join(save_dir, "train_inference_results.csv"), index=False)
+    val_df.to_csv(os.path.join(save_dir, "val_inference_results.csv"), index=False)

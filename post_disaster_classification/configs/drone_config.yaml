@@ -44,3 +44,6 @@ model_training_parameters:
   batch_size: 16
   num_epochs: 100
   learning_rate: 0.0001
+
+inference:
+  model_path: "/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/post_disaster_classification/drone_damage_saved_models/best_model.pth"
