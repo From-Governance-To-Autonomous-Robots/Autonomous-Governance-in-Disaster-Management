@@ -158,7 +158,7 @@ def run_inference(model, train_loader, val_loader, criterion, optimizer, config,
                     "tweet_text": "",
                     "img_path": img_path[i],
                     "prediction": predictions[i].cpu().numpy(),
-                    "ground_truth": labels[i].cpu().numpy(),
+                    "ground_truth": labels[i].cpu().numpy()[1],
                     "prediction_conf": prediction_conf[i]
                 }
                 train_infer_data.append(row)
@@ -174,7 +174,7 @@ def run_inference(model, train_loader, val_loader, criterion, optimizer, config,
                     "tweet_text": "",
                     "img_path": img_path[i],
                     "prediction": predictions[i].cpu().numpy(),
-                    "ground_truth": labels[i].cpu().numpy(),
+                    "ground_truth": labels[i].cpu().numpy()[1],
                     "prediction_conf": prediction_conf[i]
                 }
                 val_infer_data.append(row)

@@ -1,0 +1,3 @@
+data_path: "/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/inference_logs"
+tasks: ["info","human","damage","satellite","drone"]
+phase: "train"
