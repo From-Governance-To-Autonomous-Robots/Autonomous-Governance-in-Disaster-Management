@@ -1,3 +1,33 @@
 data_path: "/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/inference_logs"
 tasks: ["info","human","damage","satellite","drone"]
 phase: "train"
+
+total_timesteps: 80000000
+log_interval: 1600
+eval_interval: 800
+eval_episodes: 50
+
+log_dir: "decision_maker_rl_logs"
+
+wandb:
+  project: "disaster_manager"
+  entity: "juliangeralddcruz"
+  name: "run_decision_maker"
+
+environment:
+  train:
+    name: "TaskSequenceTrainEnv-v0"
+    num_parallel_env: 1
+  val:
+    name: "TaskSequenceValEnv-v0"
+    num_parallel_env: 1
+
+policy: "MlpPolicy"
+
+A2C_hyperparameters: 
+  learning_rate: 0.0005
+  gamma: 0.995
+  n_steps: 100
+  ent_coef: 0.02
+  vf_coef: 0.5
+  max_grad_norm: 1
