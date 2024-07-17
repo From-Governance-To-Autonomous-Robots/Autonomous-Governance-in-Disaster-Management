@@ -61,7 +61,7 @@ class MetricsCallback(BaseCallback):
                 self.collected_dictionary["number_of_wrongly_answered_trees"].append(info["number_of_wrongly_answered_trees"])
                 self.collected_dictionary["number_of_times_additional_data_requested"].append(info["number_of_times_additional_data_requested"])
             
-            if info["isTreeCorrectlyAnswered"]:
+            if info["isTreeCorrectlyAnswered"] > 0.9:
                 cumulative_data = [
                     i,
                     info["tree_score"],
@@ -112,10 +112,10 @@ class MetricsCallback(BaseCallback):
         if self.m_rch_count == 10:
             callback_return = False
         
-        explained_variance = self.locals['self'].logger.name_to_value['train/explained_variance']
-        if explained_variance > 0.5:
-            print('Explained Variance is Greater than Threshold. Lets Early Stop')
-            callback_return = False
+        # explained_variance = self.locals['self'].logger.name_to_value['train/explained_variance']
+        # if explained_variance > 0.5:
+        #     print('Explained Variance is Greater than Threshold. Lets Early Stop')
+        #     callback_return = False
         
         return callback_return
 

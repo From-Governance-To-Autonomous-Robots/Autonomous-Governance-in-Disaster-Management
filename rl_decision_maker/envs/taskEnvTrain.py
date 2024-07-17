@@ -32,7 +32,7 @@ class TaskSequenceTrainEnv(gym.Env):
         self.credits_satellite = 5
         self.credits_drone = 5
         
-        self.isTreeCorrectlyAnswered = False
+        self.isTreeCorrectlyAnswered = [False] * len(self.tasks)
         self.currentEpisode = 0
         self.currentStep = 0
         self.tree_counter = 0
@@ -44,8 +44,14 @@ class TaskSequenceTrainEnv(gym.Env):
         self.ground_truth = None
         self.tree_score = 0
 
-        # Define action space
-        self.action_space = spaces.Discrete(5)  # Actions 0, 1, 2, 3, 4
+        # Define Seperate Action Space for Each Task 
+        self.info_action_space = spaces.Discrete(3)  # Actions 0, 1, 4
+        self.human_action_space = spaces.Discrete(5)  # Actions 0, 1, 2, 3, 4
+        self.damage_action_space = spaces.Discrete(3)  # Actions 0, 1, 4
+        self.satellite_action_space = spaces.Discrete(3)  # Actions 0, 1, 4
+        self.drone_action_space = spaces.Discrete(3)  # Actions 0, 1, 4
+        
+        self.action_space = self._get_action_space(self.tasks[self.task_index])
         
         # Define observation space
         max_length = max([len(self.info_dataset.iloc[0]["prediction_conf"]),
@@ -55,6 +61,14 @@ class TaskSequenceTrainEnv(gym.Env):
                           len(self.drone_dataset.iloc[0]["prediction_conf"])])
         self.observation_space = spaces.Box(low=0, high=1, shape=(max_length + len(self.tasks),), dtype=np.float32)
         self.reset()
+        
+    def _get_action_space(self, task):
+        if task == "info" or task == "damage" or task == "satellite" or task == "drone":
+            return self.info_action_space  
+        elif task == "human":
+            return self.human_action_space  
+        else:
+            return self.info_action_space  
         
     def _random_select_record_from_dataset(self, task: str):
         
@@ -176,13 +190,14 @@ class TaskSequenceTrainEnv(gym.Env):
         self.credits_satellite = 5
         self.credits_drone = 5
         
-        self.isTreeCorrectlyAnswered = False
+        self.isTreeCorrectlyAnswered = [False] * len(self.tasks)
         self.number_of_times_additional_data_requested = 0
         self.currentStep = 0
         
         self.task_index = 0
         self.tree_score = 0
         self.ground_truth, self.current_task_info = self.get_task_data()
+        self.action_space = self._get_action_space(self.tasks[self.task_index])
         obs = self._get_observation()
         return obs
 
@@ -203,8 +218,8 @@ class TaskSequenceTrainEnv(gym.Env):
         reward = 0
         done = False
         
-        if action == 4:
-            task = self.tasks[self.task_index]
+        task = self.tasks[self.task_index]
+        if task != "human" and action == 2:
             if task == "info":
                 if self.credits_info != 0:
                     self.credits_info -= 1
@@ -212,13 +227,6 @@ class TaskSequenceTrainEnv(gym.Env):
                     reward = -1
                     self.number_of_times_additional_data_requested += 1
                     
-            elif task == "human":
-                if self.credits_human != 0:
-                    self.credits_human -= 1
-                    self.ground_truth, self.current_task_info = self._handle_gather_additional_data(task)
-                    self.number_of_times_additional_data_requested += 1
-                    reward = -1
-            
             elif task == "damage":
                 if self.credits_damage != 0:
                     self.credits_damage -= 1
@@ -239,20 +247,29 @@ class TaskSequenceTrainEnv(gym.Env):
                     self.ground_truth, self.current_task_info = self._handle_gather_additional_data(task)
                     self.number_of_times_additional_data_requested += 1
                     reward = -1
+                    
+        elif task == "human" and action == 4:
+            if self.credits_human != 0:
+                self.credits_human -= 1
+                self.ground_truth, self.current_task_info = self._handle_gather_additional_data(task)
+                self.number_of_times_additional_data_requested += 1
+                reward = -1
             
         elif action == self.ground_truth:
             reward = 1
+            self.isTreeCorrectlyAnswered[self.task_index] = True
             self.task_index += 1
-            self.correct_answered_tree_counter +=1
-            self.isTreeCorrectlyAnswered = True
         
         elif action != self.ground_truth:
             reward = -5
+            self.isTreeCorrectlyAnswered[self.task_index] = False
             self.task_index += 1
-            self.wrongly_answered_tree_counter +=1
-            self.isTreeCorrectlyAnswered = False
         
         if self.task_index >= len(self.tasks):
+            if np.mean(self.isTreeCorrectlyAnswered) > 0.9:
+                self.correct_answered_tree_counter +=1
+            else:
+                self.wrongly_answered_tree_counter +=1
             self.tree_counter += 1
             done = True
             self.task_index = 0
@@ -269,7 +286,7 @@ class TaskSequenceTrainEnv(gym.Env):
             info = {
                 "episode_ended":True,
                 "tree_score": self.tree_score,
-                "isTreeCorrectlyAnswered":self.isTreeCorrectlyAnswered,
+                "isTreeCorrectlyAnswered":np.mean(self.isTreeCorrectlyAnswered),
                 "currentEpisode":self.currentEpisode,
                 "currentStep":self.currentStep,
                 "tree_id":self.tree_counter,
@@ -282,7 +299,7 @@ class TaskSequenceTrainEnv(gym.Env):
             info = {
                 "episode_ended":False,
                 "tree_score": self.tree_score,
-                "isTreeCorrectlyAnswered":self.isTreeCorrectlyAnswered,
+                "isTreeCorrectlyAnswered":np.mean(self.isTreeCorrectlyAnswered),
                 "currentEpisode":self.currentEpisode,
                 "currentStep":self.currentStep,
                 "tree_id":self.tree_counter,
@@ -292,6 +309,7 @@ class TaskSequenceTrainEnv(gym.Env):
                 "number_of_times_additional_data_requested":self.number_of_times_additional_data_requested
             }
             
+        self.action_space = self._get_action_space(task)  
         obs = self._get_observation()
         return obs, reward, done, info 
 

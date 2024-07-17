@@ -8,9 +8,9 @@ import random
 import pdb
 from utils.utils import load_config
 
-class TaskSequenceValEnv(gym.Env):
+class OracleSequenceValEnv(gym.Env):
     def __init__(self,render_mode:str='human'):
-        super(TaskSequenceValEnv, self).__init__()
+        super(OracleSequenceValEnv, self).__init__()
         self.CONFIG = load_config()
         self.tasks = self.CONFIG['tasks']
         # Load the Datasets for each task
@@ -54,11 +54,7 @@ class TaskSequenceValEnv(gym.Env):
         self.action_space = self._get_action_space(self.tasks[self.task_index])
         
         # Define observation space
-        max_length = max([len(self.info_dataset.iloc[0]["prediction_conf"]),
-                          len(self.human_dataset.iloc[0]["prediction_conf"]),
-                          len(self.damage_dataset.iloc[0]["prediction_conf"]),
-                          len(self.satellite_dataset.iloc[0]["prediction_conf"]),
-                          len(self.drone_dataset.iloc[0]["prediction_conf"])])
+        max_length = 1 # using only max probablity
         self.observation_space = spaces.Box(low=0, high=1, shape=(max_length + len(self.tasks),), dtype=np.float32)
         self.reset()
         
@@ -119,7 +115,7 @@ class TaskSequenceValEnv(gym.Env):
         else:
             self.seen_info.append(selected_idx)
         
-        return dataset.loc[selected_idx]["ground_truth"], dataset.loc[selected_idx]["prediction_conf"]
+        return dataset.loc[selected_idx]["ground_truth"], max(dataset.loc[selected_idx]["prediction_conf"])
 
     def _handle_gather_additional_data(self,task):
         if task == "info":
@@ -170,7 +166,7 @@ class TaskSequenceValEnv(gym.Env):
         else:
             self.seen_info.append(selected_idx)
         
-        return dataset.loc[selected_idx]["ground_truth"], dataset.loc[selected_idx]["prediction_conf"]
+        return dataset.loc[selected_idx]["ground_truth"], max(dataset.loc[selected_idx]["prediction_conf"])
     
     def _get_data_based_on_task(self, task: str):
         dataset = pd.read_csv(os.path.join(self.CONFIG['data_path'], task, f"val_inference_results.csv"))
@@ -210,8 +206,8 @@ class TaskSequenceValEnv(gym.Env):
         task_vector[self.task_index] = 1
         task_info = self.current_task_info
         observation = np.concatenate([task_vector, task_info])
-        if observation.shape[0] < 9:
-            observation = np.concatenate([observation, np.zeros(9 - observation.shape[0])])
+        # if observation.shape[0] < 9:
+        #     observation = np.concatenate([observation, np.zeros(9 - observation.shape[0])])
         return observation
 
     def step(self, action):

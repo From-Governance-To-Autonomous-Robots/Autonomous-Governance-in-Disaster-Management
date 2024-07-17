@@ -162,6 +162,7 @@ glove_embeddings/
 *disaster-master.json
 *.env
 *_rl_logs
+*_rl_logs_old/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

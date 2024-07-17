@@ -62,7 +62,7 @@ def evaluate(model,CONFIG,step,eval_csv_file_path):
                     collected_dictionary["number_of_wrongly_answered_trees"].append(info["number_of_wrongly_answered_trees"])
                     collected_dictionary["number_of_times_additional_data_requested"].append(info["number_of_times_additional_data_requested"])
                     
-                    if info['isTreeCorrectlyAnswered']:
+                    if info['isTreeCorrectlyAnswered'] > 0.9:
                         cumulative_data = [
                             i,
                             info["tree_score"],

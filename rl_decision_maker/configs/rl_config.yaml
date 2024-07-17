@@ -3,16 +3,16 @@ tasks: ["info","human","damage","satellite","drone"]
 phase: "train"
 
 total_timesteps: 80000000
-log_interval: 1600
-eval_interval: 800
+log_interval: 8000
+eval_interval: 8000
 eval_episodes: 50
 
-log_dir: "decision_maker_rl_logs"
+log_dir: "decision_maker_orcale_logs"
 
 wandb:
   project: "disaster_manager"
   entity: "juliangeralddcruz"
-  name: "run_decision_maker"
+  name: "run_oracle_decision_maker"
 
 environment:
   train:
