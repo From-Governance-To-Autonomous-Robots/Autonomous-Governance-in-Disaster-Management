@@ -55,6 +55,7 @@ class OracleSequenceTrainEnv(gym.Env):
         
         # Define observation space
         max_length = 1 # using only max probablity
+        print('Max Len : ',1+len(self.tasks))
         self.observation_space = spaces.Box(low=0, high=1, shape=(max_length + len(self.tasks),), dtype=np.float32)
         self.reset()
         
@@ -204,7 +205,7 @@ class OracleSequenceTrainEnv(gym.Env):
     def _get_observation(self):
         task_vector = np.zeros(len(self.tasks))
         task_vector[self.task_index] = 1
-        task_info = self.current_task_info
+        task_info = [self.current_task_info]
         observation = np.concatenate([task_vector, task_info])
         # if observation.shape[0] < 9:
         #     observation = np.concatenate([observation, np.zeros(9 - observation.shape[0])])
