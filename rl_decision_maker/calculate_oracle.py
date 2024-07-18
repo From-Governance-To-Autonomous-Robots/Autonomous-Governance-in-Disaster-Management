@@ -1,12 +1,13 @@
-import gym
-from gym import spaces
 import numpy as np
 import yaml
 import pandas as pd 
+from argparse import ArgumentParser
 import os 
 import random
 import pdb
+import wandb
 from utils.utils import load_config
+from utils.log_helper import log_aggregate_stats
 
 class OracleSequenceValEnv():
     def __init__(self):
@@ -91,8 +92,8 @@ class OracleSequenceValEnv():
         return dataset.loc[selected_idx]["ground_truth"], list(dataset.loc[selected_idx]["prediction_conf"]).index(max(dataset.loc[selected_idx]["prediction_conf"]))
 
     def _get_data_based_on_task(self, task: str):
-        dataset = pd.read_csv(os.path.join(self.CONFIG['data_path'], task, f"val_inference_results.csv"))
-        dataset["prediction_conf"] = dataset["prediction_conf"].apply(lambda x:list(map(float, x.strip("[]").split())))
+        dataset = pd.read_csv(os.path.join(self.CONFIG['data_path'], task, f"train_inference_results.csv"))
+        dataset["prediction_conf"] = dataset["prediction_conf"].apply(lambda x: list(map(float, x.strip("[]").split())))
         return dataset
     
     def reset(self):
@@ -139,21 +140,67 @@ class OracleSequenceValEnv():
         if done:
             self.currentEpisode += 1
             info = {
-                "episode_ended":True,
-                "isTreeCorrectlyAnswered":np.mean(self.isTreeCorrectlyAnswered),
-                "currentEpisode":self.currentEpisode,
-                "tree_id":self.tree_counter,
-                "number_of_correctly_answered_trees":self.correct_answered_tree_counter,
-                "number_of_wrongly_answered_trees":self.wrongly_answered_tree_counter
+                "episode_ended": True,
+                "isTreeCorrectlyAnswered": np.mean(self.isTreeCorrectlyAnswered),
+                "currentEpisode": self.currentEpisode,
+                "tree_id": self.tree_counter,
+                "number_of_correctly_answered_trees": self.correct_answered_tree_counter,
+                "number_of_wrongly_answered_trees": self.wrongly_answered_tree_counter
             }
         else:
             info = {
-                "episode_ended":False,
-                "isTreeCorrectlyAnswered":np.mean(self.isTreeCorrectlyAnswered),
-                "currentEpisode":self.currentEpisode,
-                "tree_id":self.tree_counter,
-                "number_of_correctly_answered_trees":self.correct_answered_tree_counter,
-                "number_of_wrongly_answered_trees":self.wrongly_answered_tree_counter
+                "episode_ended": False,
+                "isTreeCorrectlyAnswered": np.mean(self.isTreeCorrectlyAnswered),
+                "currentEpisode": self.currentEpisode,
+                "tree_id": self.tree_counter,
+                "number_of_correctly_answered_trees": self.correct_answered_tree_counter,
+                "number_of_wrongly_answered_trees": self.wrongly_answered_tree_counter
             }
             
-        return done,info 
+        return done, info
+
+
+def main():
+    parser = ArgumentParser()
+    parser.add_argument('-config',type=str,default="/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/configs/config.yaml")
+    args = parser.parse_args()
+    config = load_config(args.config)
+    
+    # Initialize wandb
+    wandb.init(project=config['wandb']['project'], entity=config['wandb']['entity'], name=config['wandb']['name'])
+    
+    env = OracleSequenceValEnv()
+    total_steps = config['total_timesteps']  # or 1000000
+    log_interval = total_steps // config['log_interval']
+    step_count = 0
+    
+    collected_dictionary = {
+        "episode_ended":[],
+        "isTreeCorrectlyAnswered":[],
+        "currentEpisode":[],
+        "tree_id":[],
+        "number_of_correctly_answered_trees":[],
+        "number_of_wrongly_answered_trees":[]
+    }
+
+    while step_count < total_steps:
+        done, info = env.step()
+        step_count += 1
+
+        if done:
+            collected_dictionary["isTreeCorrectlyAnswered"].append(info["isTreeCorrectlyAnswered"])
+            collected_dictionary["currentEpisode"].append(info["currentEpisode"])
+            collected_dictionary["tree_id"].append(info["tree_id"])
+            collected_dictionary["number_of_correctly_answered_trees"].append(info["number_of_correctly_answered_trees"])
+            collected_dictionary["number_of_wrongly_answered_trees"].append(info["number_of_wrongly_answered_trees"])
+            wandb.log(info)
+            env.reset()
+
+    log_aggregate_stats(collected_dictionary,key="isTreeCorrectlyAnswered",log_string="isTreeCorrectlyAnswered",step=step_count)
+    wandb.log({"number_of_correctly_answered_trees":max(collected_dictionary["number_of_correctly_answered_trees"])})
+    wandb.log({"number_of_wrongly_answered_trees":max(collected_dictionary["number_of_wrongly_answered_trees"])})
+    wandb.log({"tree_id":max(collected_dictionary["tree_id"])})
+    wandb.finish()
+
+if __name__ == "__main__":
+    main()
