@@ -11,18 +11,18 @@ const Score = () => {
     const userDoc = doc(db, 'users', user.uid);
     const userDocSnapshot = await getDoc(userDoc);
     const userDocData = userDocSnapshot.data();
-    let tree0Score = userDocData.responses['tree_0'].points // this is an array , sum it up 
-    let tree1Score = userDocData.responses['tree_1'].points // this is an array , sum it up 
-    let tree2Score = userDocData.responses['tree_2'].points // this is an array , sum it up 
-    let tree3Score = userDocData.responses['tree_3'].points // this is an array , sum it up 
-    let tree4Score = userDocData.responses['tree_4'].points // this is an array , sum it up 
-    let aggregateScore = tree0Score + tree1Score + tree2Score + tree3Score + tree4Score;
+    // let tree0Score = userDocData.responses['tree_0'].points // this is an array , sum it up 
+    // let tree1Score = userDocData.responses['tree_1'].points // this is an array , sum it up 
+    // let tree2Score = userDocData.responses['tree_2'].points // this is an array , sum it up 
+    // let tree3Score = userDocData.responses['tree_3'].points // this is an array , sum it up 
+    // let tree4Score = userDocData.responses['tree_4'].points // this is an array , sum it up 
+    // let aggregateScore = tree0Score + tree1Score + tree2Score + tree3Score + tree4Score;
 
-    await updateDoc(userDoc,{
-      score: aggregateScore
-    });
+    // await updateDoc(userDoc,{
+    //   score: aggregateScore
+    // });
 
-    setScore(aggregateScore);
+    setScore(userDocData.score * 100);
   };
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const Score = () => {
   
   return (
     <div>
-      <h2>Your score: {score} / 25</h2>
+      <h2>You scored : {score} / 100</h2>
     </div>
   );
 };

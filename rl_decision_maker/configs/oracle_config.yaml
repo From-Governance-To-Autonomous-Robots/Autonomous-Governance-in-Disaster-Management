@@ -1,10 +1,10 @@
-data_path: "/home/aaimscadmin/workspace/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/inference_logs"
+data_path: "/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/inference_logs"
 tasks: ["info","human","damage","satellite","drone"]
 phase: "train"
 
 total_timesteps: 80000000
-log_interval: 8000
-eval_interval: 8000
+log_interval: 16000
+eval_interval: 16000
 eval_episodes: 50
 
 log_dir: "decision_maker_orcale_logs"

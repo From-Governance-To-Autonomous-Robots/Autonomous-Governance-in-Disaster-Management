@@ -25,12 +25,13 @@ export const AuthProvider = ({ children }) => {
               user_id: user.uid,
               consent_agree: true,
               training_available: 2,
-              validation_pending: 5,
               current_tree_level: 0,
+              gameEnded:false,
               responses: {
                 tree_0: {
                   points: [],
-                  isCompleted: false,
+                  isCorrectlyAnswered:0,
+                  isCompleted: [false,false,false,false,false],
                   tree: {
                     info: {
                       user_answer: [],
@@ -61,7 +62,8 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_1: {
                   points: [],
-                  isCompleted: false,
+                  isCorrectlyAnswered:0,
+                  isCompleted: [false,false,false,false,false],
                   tree: {
                     info: {
                       user_answer: [],
@@ -92,7 +94,8 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_2: {
                   points: [],
-                  isCompleted: false,
+                  isCorrectlyAnswered:0,
+                  isCompleted: [false,false,false,false,false],
                   tree: {
                     info: {
                       user_answer: [],
@@ -123,7 +126,8 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_3: {
                   points: [],
-                  isCompleted: false,
+                  isCorrectlyAnswered:0,
+                  isCompleted: [false,false,false,false,false],
                   tree: {
                     info: {
                       user_answer: [],
@@ -154,7 +158,8 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_4: {
                   points: [],
-                  isCompleted: false,
+                  isCorrectlyAnswered:0,
+                  isCompleted: [false,false,false,false,false],
                   tree: {
                     info: {
                       user_answer: [],
@@ -205,12 +210,13 @@ export const AuthProvider = ({ children }) => {
             user_id: user.uid,
             consent_agree: true,
             training_available: 2,
-            validation_pending: 5,
+            gameEnded:false,
             current_tree_level: 0,
             responses: {
               tree_0: {
                 points: [],
-                isCompleted: false,
+                isCorrectlyAnswered:0,
+                isCompleted: [false,false,false,false,false],
                 tree: {
                   info: {
                     user_answer: [],
@@ -246,7 +252,8 @@ export const AuthProvider = ({ children }) => {
               },
               tree_1: {
                 points: [],
-                isCompleted: false,
+                isCorrectlyAnswered:0,
+                isCompleted: [false,false,false,false,false],
                 tree: {
                   info: {
                     user_answer: [],
@@ -282,7 +289,8 @@ export const AuthProvider = ({ children }) => {
               },
               tree_2: {
                 points: [],
-                isCompleted: false,
+                isCorrectlyAnswered:0,
+                isCompleted: [false,false,false,false,false],
                 tree: {
                   info: {
                     user_answer: [],
@@ -318,7 +326,8 @@ export const AuthProvider = ({ children }) => {
               },
               tree_3: {
                 points: [],
-                isCompleted: false,
+                isCorrectlyAnswered:0,
+                isCompleted: [false,false,false,false,false],
                 tree: {
                   info: {
                     user_answer: [],
@@ -354,7 +363,8 @@ export const AuthProvider = ({ children }) => {
               },
               tree_4: {
                 points: [],
-                isCompleted: false,
+                isCorrectlyAnswered:0,
+                isCompleted: [false,false,false,false,false],
                 tree: {
                   info: {
                     user_answer: [],

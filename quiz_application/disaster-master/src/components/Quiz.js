@@ -40,13 +40,25 @@ const MAPPING_DICT = {
   }
 }
 
+const calculateMean= (booleanArray)=>{
+  // Convert boolean array to integer array (true -> 1, false -> 0)
+  const integerArray = booleanArray.map(value => value ? 1 : 0);
+
+  // Calculate the sum of the array
+  const sum = integerArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+  // Calculate the mean
+  const mean = sum / integerArray.length;
+
+  return mean;
+}
+
 const Quiz = ({ task, phase }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
   const [currentTreeLevel, setCurrentTreeLevel] = useState(null);
   const [availableTraining, setAvailableTraining] = useState(null);
-  const [availableValidation, setAvailableValidation] = useState(null);
   const tasksList = ["info", "human", "damage", "satellite", "drone-damage"]
   const phaseList = ["train", "val"]
   const { storedQuestion, loading } = useFirestore(task, phase);
@@ -57,14 +69,13 @@ const Quiz = ({ task, phase }) => {
     const userDocSnapshot = await getDoc(userDoc);
     const userDocData = userDocSnapshot.data();
     setAvailableTraining(userDocData.training_available)
-    setAvailableValidation(userDocData.validation_pending)
     setUserData(userDocData);
     setCurrentTreeLevel(userDocData.current_tree_level);
   };
 
   useEffect(() => {
     fetchUserData();
-  }, [user.uid]);
+  }, [task,phase]);
 
   const checkIfContinueTraining = async () => {
     const userDoc = doc(db, 'users', user.uid);
@@ -94,12 +105,48 @@ const Quiz = ({ task, phase }) => {
     }
   };
 
+  const handleEndGame = async () => {
+    // End game here
+    const userDoc = doc(db, 'users', user.uid);
+    const userDocSnapshot = await getDoc(userDoc);
+    const userDocData = userDocSnapshot.data();
+
+    // Update gameEnded to true
+    await updateDoc(userDoc, {
+        gameEnded: true,
+    });
+
+    // Calculate the score here
+    const currentTreeLevel = userDocData.current_tree_level;
+    const responses = userDocData.responses;
+
+    let isCorrectlyAnsweredList = [];
+
+    for (let i = 0; i <= currentTreeLevel; i++) {
+        const treeKey = `tree_${i}`;
+        if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('isCorrectlyAnswered')) {
+            isCorrectlyAnsweredList.push(responses[treeKey].isCorrectlyAnswered);
+        }
+    }
+
+    const score = isCorrectlyAnsweredList.reduce((acc, val) => acc + val, 0) / isCorrectlyAnsweredList.length;
+
+    // Update the score in the document
+    await updateDoc(userDoc, {
+        score: score,
+    });
+
+    // Navigate to results page
+    navigate("/results");
+    return;
+}
+
   const handleValidationPhase = async (question, userAnswer, isCorrect) => {
     const userDoc = doc(db, 'users', user.uid);
     const userDocSnapshot = await getDoc(userDoc);
     const userDocData = userDocSnapshot.data();
-  
-    if (userDocData.validation_pending === 0) {
+    
+    if (userDocData.gameEnded) {
       navigate("/results");
       return;
     }
@@ -110,7 +157,7 @@ const Quiz = ({ task, phase }) => {
       handleCorrectAnswer(userDoc, userDocData, question, userAnswer, currentTree);
     } else if (userAnswer === "Gather Additional Data") {
       handleGatherAdditionalData(userDoc, userDocData, question, userAnswer, currentTree);
-    } else { // wrong answer
+    } else { 
       handleNoResponseNecessary(userDoc, userDocData, question, userAnswer, currentTree);
     }
     
@@ -120,13 +167,13 @@ const Quiz = ({ task, phase }) => {
   const handleCorrectAnswer = async (userDoc, userDocData, question, userAnswer, currentTree) => {
     if (task === "drone-damage") {
       await updateUserDoc(userDoc, {
-        validation_pending: userDocData.validation_pending - 1,
         current_tree_level: userDocData.current_tree_level + 1,
         number_of_completed_trees: userDocData.number_of_completed_trees + 1,
       });
     }
   
     currentTree.points.push(1);
+    currentTree.isCompleted[tasksList.indexOf(task)]=true;
     currentTree.tree[task].question_id.push(question.question_id);
     currentTree.tree[task].user_answer.push(userAnswer);
   
@@ -134,16 +181,15 @@ const Quiz = ({ task, phase }) => {
       [`responses.tree_${userDocData.current_tree_level}.tree.${task}.question_id`]: currentTree.tree[task].question_id,
       [`responses.tree_${userDocData.current_tree_level}.tree.${task}.user_answer`]: currentTree.tree[task].user_answer,
       [`responses.tree_${userDocData.current_tree_level}.points`]: currentTree.points,
+      [`responses.tree_${userDocData.current_tree_level}.isCompleted`]: currentTree.isCompleted,
+      [`responses.tree_${userDocData.current_tree_level}.isCorrectlyAnswered`]: calculateMean(currentTree.isCompleted),
     };
-  
-    if (task === "drone-damage") {
-      updates[`responses.tree_${userDocData.current_tree_level}.isCompleted`] = true;
-    }
   
     await updateUserDoc(userDoc, updates);
 
     const { path, state }  = checkNavigationHelper(task, phase);
-    navigate(userDocData.validation_pending === 0 ? "/results" : path, { state });
+    // navigate(userDocData.validation_pending === 0 ? "/results" : path, { state });
+    navigate(path, { state });
   };
   
   const handleGatherAdditionalData = async (userDoc, userDocData, question, userAnswer, currentTree) => {
@@ -174,13 +220,13 @@ const Quiz = ({ task, phase }) => {
   const handleNoResponseNecessary = async (userDoc, userDocData, question, userAnswer, currentTree) => {
     if (task === "drone-damage") {
       await updateUserDoc(userDoc, {
-        validation_pending: userDocData.validation_pending - 1,
         current_tree_level: userDocData.current_tree_level + 1,
         number_of_failed_trees: userDocData.number_of_failed_trees + 1,
       });
     }
   
     currentTree.points.push(-5);
+    currentTree.isCompleted[tasksList.indexOf(task)]=false;
     currentTree.tree[task].question_id.push(question.question_id);
     currentTree.tree[task].user_answer.push(userAnswer);
   
@@ -188,16 +234,13 @@ const Quiz = ({ task, phase }) => {
       [`responses.tree_${userDocData.current_tree_level}.tree.${task}.question_id`]: currentTree.tree[task].question_id,
       [`responses.tree_${userDocData.current_tree_level}.tree.${task}.user_answer`]: currentTree.tree[task].user_answer,
       [`responses.tree_${userDocData.current_tree_level}.points`]: currentTree.points,
-      [`responses.tree_${userDocData.current_tree_level}.isCompleted`]: false,
+      [`responses.tree_${userDocData.current_tree_level}.isCompleted`]: currentTree.isCompleted,
+      [`responses.tree_${userDocData.current_tree_level}.isCorrectlyAnswered`]: calculateMean(currentTree.isCompleted),
     });
     
-    const { path, state } = checkNavigationHelper("info", phase);
-    if (task == "info"){
-      navigate('/loading', { state: { task: "info", phase: phase } });
-    }
-    else{
-      navigate(userDocData.validation_pending === 0 ? "/results" : path, { state });
-    }
+    const { path, state }  = checkNavigationHelper(task, phase);
+    // navigate(userDocData.validation_pending === 0 ? "/results" : path, { state });
+    navigate( path, { state });
   };
   
   const updateUserDoc = async (userDoc, updates) => {
@@ -245,7 +288,9 @@ const Quiz = ({ task, phase }) => {
     <div>
       <Question
         question={storedQuestion}
+        currentTreeLevel={currentTreeLevel}
         handleAnswer={handleAnswer}
+        handleEndGame={handleEndGame}
         mappingDict={MAPPING_DICT}
         task={task}
       />
