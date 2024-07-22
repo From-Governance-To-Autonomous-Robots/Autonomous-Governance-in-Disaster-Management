@@ -62,6 +62,8 @@ const Quiz = ({ task, phase }) => {
   const tasksList = ["info", "human", "damage", "satellite", "drone-damage"]
   const phaseList = ["train", "val"]
   const { storedQuestion, loading } = useFirestore(task, phase);
+  const [currentTreeScore,setCurrentTreeScore] = useState(0);
+  const [overallScore,setOverallScore] = useState(0);
   const [score, setScore] = useState(0);
 
   const fetchUserData = async () => {
@@ -71,6 +73,25 @@ const Quiz = ({ task, phase }) => {
     setAvailableTraining(userDocData.training_available)
     setUserData(userDocData);
     setCurrentTreeLevel(userDocData.current_tree_level);
+
+    // calculate score
+    // Calculate the score here
+    const currentTreeLevel = userDocData.current_tree_level;
+    const responses = userDocData.responses;
+
+    let isCorrectlyAnsweredList = [];
+
+    for (let i = 0; i <= currentTreeLevel; i++) {
+        const treeKey = `tree_${i}`;
+        if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('isCorrectlyAnswered')) {
+            isCorrectlyAnsweredList.push(responses[treeKey].isCorrectlyAnswered);
+        }
+    }
+
+    const score = isCorrectlyAnsweredList.reduce((acc, val) => acc + val, 0) / isCorrectlyAnsweredList.length;
+    setOverallScore(score);
+    
+    setCurrentTreeScore(responses[`tree_${currentTreeLevel}`].isCorrectlyAnswered)
   };
 
   useEffect(() => {
@@ -173,7 +194,9 @@ const Quiz = ({ task, phase }) => {
     }
   
     currentTree.points.push(1);
-    currentTree.isCompleted[tasksList.indexOf(task)]=true;
+    let index = tasksList.indexOf(task);
+    currentTree.isCompleted[index]=true;
+    
     currentTree.tree[task].question_id.push(question.question_id);
     currentTree.tree[task].user_answer.push(userAnswer);
   
@@ -207,7 +230,7 @@ const Quiz = ({ task, phase }) => {
       [`responses.tree_${userDocData.current_tree_level}.points`]: currentTree.points,
       [`responses.tree_${userDocData.current_tree_level}.tree.${task}.availableAdditionalData`]: currentTree.tree[task].availableAdditionalData,
     });
-  
+    
     let previousTaskIndex = tasksList.indexOf(task) - 1;
     if (previousTaskIndex <0){
       previousTaskIndex = 0
@@ -293,6 +316,8 @@ const Quiz = ({ task, phase }) => {
         handleEndGame={handleEndGame}
         mappingDict={MAPPING_DICT}
         task={task}
+        currentTreeScore={currentTreeScore}
+        overallScore={overallScore}
       />
     </div>
   );

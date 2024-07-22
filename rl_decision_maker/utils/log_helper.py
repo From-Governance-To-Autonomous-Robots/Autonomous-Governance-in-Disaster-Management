@@ -33,7 +33,7 @@ def calculate_aggregate_stats(infos,key):
 def log_aggregate_stats(infos,key,log_string,step):
     _mean ,_std = calculate_aggregate_stats(infos,key)
     wandb.log({f"mean_{log_string}":_mean,"step":step + 1})
-    wandb.log({f"std_c{log_string}":_std,"step":step + 1})
+    wandb.log({f"std_{log_string}":_std,"step":step + 1})
     
 def calculate_aggregate_stats(arr):
     _mean = np.array(arr).mean()
@@ -43,4 +43,4 @@ def calculate_aggregate_stats(arr):
 def log_aggregate_stats(infos,key,log_string,step):
     _mean ,_std = calculate_aggregate_stats(infos[key])
     wandb.log({f"mean_{log_string}":_mean,"step":step + 1})
-    wandb.log({f"std_c{log_string}":_std,"step":step + 1})
+    wandb.log({f"std_{log_string}":_std,"step":step + 1})

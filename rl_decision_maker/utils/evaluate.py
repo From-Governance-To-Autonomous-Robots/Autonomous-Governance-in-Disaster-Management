@@ -5,6 +5,7 @@ import time
 from utils.log_helper import log_aggregate_stats,log_to_csv,log_results_table_to_wandb,calculate_aggregate_stats
 import os
 import pdb
+import wandb
 
 def evaluate(model,CONFIG,step,eval_csv_file_path):
     print('in Evaluate')
@@ -51,7 +52,6 @@ def evaluate(model,CONFIG,step,eval_csv_file_path):
                 info = infos[i]
                 episode_starts[i] = done
                 if done:
-                    episode_counts[i] += 1
                     
                     collected_dictionary["tree_score"].append(info["tree_score"])
                     collected_dictionary["isTreeCorrectlyAnswered"].append(info["isTreeCorrectlyAnswered"])
@@ -61,6 +61,8 @@ def evaluate(model,CONFIG,step,eval_csv_file_path):
                     collected_dictionary["number_of_correctly_answered_trees"].append(info["number_of_correctly_answered_trees"])
                     collected_dictionary["number_of_wrongly_answered_trees"].append(info["number_of_wrongly_answered_trees"])
                     collected_dictionary["number_of_times_additional_data_requested"].append(info["number_of_times_additional_data_requested"])
+                    
+                    wandb.log({"Eval/episode_tree_score":info["tree_score"],"episode":episode_counts[i]})
                     
                     if info['isTreeCorrectlyAnswered'] > 0.9:
                         cumulative_data = [
@@ -76,6 +78,8 @@ def evaluate(model,CONFIG,step,eval_csv_file_path):
                             info["number_of_times_additional_data_requested"]
                         ]
                         log_to_csv(cumulative_data,eval_csv_file_path)
+                    
+                    episode_counts[i] += 1
                     
         observations = new_observations
         

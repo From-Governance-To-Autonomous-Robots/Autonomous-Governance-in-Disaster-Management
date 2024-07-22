@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import '../styles/Question.css';
 
-const Question = ({ question,currentTreeLevel, handleAnswer, handleEndGame, mappingDict, task }) => {
-
+const Question = ({ question, currentTreeLevel, handleAnswer, handleEndGame, mappingDict, task, currentTreeScore, overallScore }) => {
   return (
     <div className="question-container">
+      <div className="score-container">
+        <h1>Overall Score: {Math.round(overallScore * 100)}</h1>
+        <h1>Scenario Score: {Math.round(currentTreeScore * 100)}</h1>
+      </div>
       <h1 className="scenario-title">Scenario-{currentTreeLevel}</h1>
       <img src={question.image} alt="question" className="question-image" />
       <p className="question-text"><strong>{question.text}</strong></p>
@@ -17,7 +20,7 @@ const Question = ({ question,currentTreeLevel, handleAnswer, handleEndGame, mapp
             onClick={() => handleAnswer(option)}
             className={`question-button ${option === 'Gather Additional Data' ? 'gather-data-button' : ''}`}
           >
-            {option}
+            {option === 'Gather Additional Data' ? 'Unsure. More data needed.' : option}
           </button>
         ))}
       </div>

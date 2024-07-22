@@ -6,73 +6,94 @@
   justify-content: center;
   height: 100vh;
   text-align: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 15px;
+}
+
+.score-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 20px;
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+  color: #fff;
+}
+
+.score-container h1 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.scenario-title {
+  font-weight: bold;
+  color: #f39c12;
+  margin-bottom: 20px;
+  font-size: 1.5em;
 }
 
 .question-image {
   max-width: 100%;
   height: auto;
-}
-
-.question-text {
-  font-style: italic;
-  font-weight: bold;
-  font-size: 1.5em;
-  margin: 20px 0;
-}
-
-.question-format {
-  font-style: italic;
-  font-weight: bold;
-  font-size: 1.2em;
+  border: 2px solid #fff;
+  border-radius: 10px;
   margin-bottom: 20px;
+}
+
+.question-text, .question-format {
+  font-style: italic;
+  font-weight: bold;
+  margin: 20px 0;
+  color: #fff;
 }
 
 .button-container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 10px; /* Adjust the gap as needed */
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .question-button {
-  background-color: blue;
+  background-color: #3498db;
   color: white;
-  font-size: 1.2em;
+  font-size: 1em;
   padding: 10px 20px;
-  margin: 10px;
+  margin: 5px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .question-button:hover {
-  background-color: darkblue;
+  background-color: #2980b9;
 }
 
 .gather-data-button {
-  background-color: green; /* Different color for 'Gather Additional Data' */
+  background-color: #27ae60;
 }
 
 .gather-data-button:hover {
-  background-color: darkgreen;
+  background-color: #1e8449;
 }
 
 .end-game-button {
-  background-color: red;
+  background-color: #e74c3c;
   color: white;
   font-size: 1.2em;
   padding: 10px 20px;
   margin-top: 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .end-game-button:hover {
-  background-color: darkred;
-}
-
-.scenario-title {
-  font-weight: bold;
-  color: red;
-  margin-bottom: 20px;
+  background-color: #c0392b;
 }

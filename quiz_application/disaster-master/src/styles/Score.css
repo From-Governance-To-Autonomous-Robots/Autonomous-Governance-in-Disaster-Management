@@ -1,0 +1,30 @@
+/* Score.css */
+.score-container1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to bottom, #1e3c72, #2a5298);
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .score-display1 {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  .score-display1 h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+  }
+  
+  .score-value1 {
+    font-size: 3em;
+    font-weight: bold;
+    color: #f39c12;
+  }
+  
