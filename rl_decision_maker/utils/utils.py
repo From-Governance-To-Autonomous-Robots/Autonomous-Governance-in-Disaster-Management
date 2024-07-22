@@ -2,7 +2,7 @@ import yaml
 import gym 
 import numpy as np
 
-def load_config(file_path='/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/configs/oracle_config.yaml'):
+def load_config(file_path='/home/aaimscadmin/workspace/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/configs/rl_config.yaml'):
     with open(file_path, 'r') as file:
         config = yaml.safe_load(file)
     return config
