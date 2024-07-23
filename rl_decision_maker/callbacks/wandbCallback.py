@@ -20,6 +20,8 @@ class MetricsCallback(BaseCallback):
             "episode_ended":[],
             "tree_score":[],
             "isTreeCorrectlyAnswered":[],
+            "isTreeWronglyAnswered":[],
+            "isTreeAdditionalDataRequested":[],
             "currentEpisode":[],
             "currentStep":[],
             "tree_id":[],
@@ -53,6 +55,8 @@ class MetricsCallback(BaseCallback):
             if info["episode_ended"]:
                 self.collected_dictionary["tree_score"].append(info["tree_score"])
                 self.collected_dictionary["isTreeCorrectlyAnswered"].append(info["isTreeCorrectlyAnswered"])
+                self.collected_dictionary["isTreeWronglyAnswered"].append(info["isTreeWronglyAnswered"])
+                self.collected_dictionary["isTreeAdditionalDataRequested"].append(info["isTreeAdditionalDataRequested"])
                 self.collected_dictionary["currentEpisode"].append(info["currentEpisode"])
                 self.collected_dictionary["currentStep"].append(info["currentStep"])
                 self.collected_dictionary["tree_id"].append(info["tree_id"])
@@ -66,6 +70,8 @@ class MetricsCallback(BaseCallback):
                     i,
                     info["tree_score"],
                     info["isTreeCorrectlyAnswered"],
+                    info["isTreeWronglyAnswered"],
+                    info["isTreeAdditionalDataRequested"],
                     info["currentEpisode"],
                     info["currentStep"],
                     info["tree_id"],
@@ -84,6 +90,8 @@ class MetricsCallback(BaseCallback):
             if (step) % self.log_interval == 0 or step == self.total_timesteps - 1:
                 log_aggregate_stats(self.collected_dictionary,key="tree_score",log_string="tree_score",step=step)
                 log_aggregate_stats(self.collected_dictionary,key="isTreeCorrectlyAnswered",log_string="isTreeCorrectlyAnswered",step=step)
+                log_aggregate_stats(self.collected_dictionary,key="isTreeWronglyAnswered",log_string="isTreeWronglyAnswered",step=step)
+                log_aggregate_stats(self.collected_dictionary,key="isTreeAdditionalDataRequested",log_string="isTreeAdditionalDataRequested",step=step)
                 log_aggregate_stats(self.collected_dictionary,key="currentEpisode",log_string="currentEpisode",step=step)
                 log_aggregate_stats(self.collected_dictionary,key="tree_id",log_string="tree_id",step=step)
                 log_aggregate_stats(self.collected_dictionary,key="currentStepReward",log_string="currentStepReward",step=step)
@@ -94,6 +102,8 @@ class MetricsCallback(BaseCallback):
                     "episode_ended":[],
                     "tree_score":[],
                     "isTreeCorrectlyAnswered":[],
+                    "isTreeWronglyAnswered":[],
+                    "isTreeAdditionalDataRequested":[],
                     "currentEpisode":[],
                     "currentStep":[],
                     "tree_id":[],

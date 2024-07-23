@@ -9,7 +9,9 @@ const Question = ({ question, currentTreeLevel, handleAnswer, handleEndGame, map
         <h1>Scenario Score: {Math.round(currentTreeScore * 100)}</h1>
       </div>
       <h1 className="scenario-title">Scenario-{currentTreeLevel}</h1>
-      <img src={question.image} alt="question" className="question-image" />
+      <div className="image-container">
+        <img src={question.image} alt="question" className="question-image" />
+      </div>
       <p className="question-text"><strong>{question.text}</strong></p>
       <p className="question-format"><strong>Question: {question.question_format}</strong></p>
       <p><strong>Correct Answer: {mappingDict[task][question.correct_answer]}</strong></p>

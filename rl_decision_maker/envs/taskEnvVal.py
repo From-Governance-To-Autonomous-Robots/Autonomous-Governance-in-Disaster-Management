@@ -33,6 +33,8 @@ class TaskSequenceValEnv(gym.Env):
         self.credits_drone = 5
         
         self.isTreeCorrectlyAnswered = [False] * len(self.tasks)
+        self.isTreeAdditionalDataRequested = [False] * len(self.tasks)
+        self.isTreeWronglyAnswered = [False] * len(self.tasks)
         self.currentEpisode = 0
         self.currentStep = 0
         self.tree_counter = 0
@@ -191,6 +193,8 @@ class TaskSequenceValEnv(gym.Env):
         self.credits_drone = 5
         
         self.isTreeCorrectlyAnswered = [False] * len(self.tasks)
+        self.isTreeAdditionalDataRequested = [False] * len(self.tasks)
+        self.isTreeWronglyAnswered = [False] * len(self.tasks)
         self.number_of_times_additional_data_requested = 0
         self.currentStep = 0
         
@@ -225,12 +229,14 @@ class TaskSequenceValEnv(gym.Env):
                     self.credits_info -= 1
                     self.ground_truth, self.current_task_info = self._handle_gather_additional_data(task)
                     reward = -1
+                    self.isTreeAdditionalDataRequested[self.task_index] = True
                     self.number_of_times_additional_data_requested += 1
                     
             elif task == "damage":
                 if self.credits_damage != 0:
                     self.credits_damage -= 1
                     self.ground_truth, self.current_task_info = self._handle_gather_additional_data(task)
+                    self.isTreeAdditionalDataRequested[self.task_index] = True
                     self.number_of_times_additional_data_requested += 1
                     reward = -1
             
@@ -238,6 +244,7 @@ class TaskSequenceValEnv(gym.Env):
                 if self.credits_satellite != 0:
                     self.credits_satellite -= 1
                     self.ground_truth, self.current_task_info = self._handle_gather_additional_data(task)
+                    self.isTreeAdditionalDataRequested[self.task_index] = True
                     self.number_of_times_additional_data_requested += 1
                     reward = -1
             
@@ -245,6 +252,7 @@ class TaskSequenceValEnv(gym.Env):
                 if self.credits_drone != 0:
                     self.credits_drone -= 1
                     self.ground_truth, self.current_task_info = self._handle_gather_additional_data(task)
+                    self.isTreeAdditionalDataRequested[self.task_index] = True
                     self.number_of_times_additional_data_requested += 1
                     reward = -1
                     
@@ -252,17 +260,20 @@ class TaskSequenceValEnv(gym.Env):
             if self.credits_human != 0:
                 self.credits_human -= 1
                 self.ground_truth, self.current_task_info = self._handle_gather_additional_data(task)
+                self.isTreeAdditionalDataRequested[self.task_index] = True
                 self.number_of_times_additional_data_requested += 1
                 reward = -1
             
         elif action == self.ground_truth:
             reward = 1
             self.isTreeCorrectlyAnswered[self.task_index] = True
+            self.isTreeWronglyAnswered[self.task_index] = False
             self.task_index += 1
         
         elif action != self.ground_truth:
             reward = -5
             self.isTreeCorrectlyAnswered[self.task_index] = False
+            self.isTreeWronglyAnswered[self.task_index] = True
             self.task_index += 1
         
         if self.task_index >= len(self.tasks):
@@ -287,6 +298,8 @@ class TaskSequenceValEnv(gym.Env):
                 "episode_ended":True,
                 "tree_score": self.tree_score,
                 "isTreeCorrectlyAnswered":np.mean(self.isTreeCorrectlyAnswered),
+                "isTreeWronglyAnswered":np.mean(self.isTreeWronglyAnswered),
+                "isTreeAdditionalDataRequested":np.mean(self.isTreeAdditionalDataRequested),
                 "currentEpisode":self.currentEpisode,
                 "currentStep":self.currentStep,
                 "tree_id":self.tree_counter,
@@ -300,6 +313,8 @@ class TaskSequenceValEnv(gym.Env):
                 "episode_ended":False,
                 "tree_score": self.tree_score,
                 "isTreeCorrectlyAnswered":np.mean(self.isTreeCorrectlyAnswered),
+                "isTreeWronglyAnswered":np.mean(self.isTreeWronglyAnswered),
+                "isTreeAdditionalDataRequested":np.mean(self.isTreeAdditionalDataRequested),
                 "currentEpisode":self.currentEpisode,
                 "currentStep":self.currentStep,
                 "tree_id":self.tree_counter,
