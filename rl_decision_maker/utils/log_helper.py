@@ -4,7 +4,7 @@ import wandb
 import numpy as np 
 
 def log_to_csv(cumulative_data,csv_file_path):
-    columns=["env_id","tree_score", "isTreeCorrectlyAnswered", "currentEpisode", "currentStep", "tree_id", "currentStepReward", "number_of_correctly_answered_trees", "number_of_wrongly_answered_trees", "number_of_times_additional_data_requested"]
+    columns=["env_id","tree_score", "isTreeCorrectlyAnswered", "isTreeWronglyAnswered", "isTreeAdditionalDataRequested", "currentEpisode", "currentStep", "tree_id", "currentStepReward", "number_of_correctly_answered_trees", "number_of_wrongly_answered_trees", "number_of_times_additional_data_requested"]
     if not os.path.exists(csv_file_path):
         mode = 'w' 
     else:
@@ -18,7 +18,7 @@ def log_to_csv(cumulative_data,csv_file_path):
         
 
 def log_results_table_to_wandb(csv_file_path,prefix='Train'):
-    columns=["env_id","tree_score", "isTreeCorrectlyAnswered", "currentEpisode", "currentStep", "tree_id", "currentStepReward", "number_of_correctly_answered_trees", "number_of_wrongly_answered_trees", "number_of_times_additional_data_requested"]
+    columns=["env_id","tree_score", "isTreeCorrectlyAnswered", "isTreeWronglyAnswered", "isTreeAdditionalDataRequested", "currentEpisode", "currentStep", "tree_id", "currentStepReward", "number_of_correctly_answered_trees", "number_of_wrongly_answered_trees", "number_of_times_additional_data_requested"]
     df = pd.read_csv(csv_file_path)
     results_table = wandb.Table(columns=columns)
     for index, row in df.iterrows():
