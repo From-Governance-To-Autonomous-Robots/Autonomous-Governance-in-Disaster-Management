@@ -62,7 +62,7 @@ def evaluate(model,CONFIG,step,eval_csv_file_path):
                     collected_dictionary["number_of_wrongly_answered_trees"].append(info["number_of_wrongly_answered_trees"])
                     collected_dictionary["number_of_times_additional_data_requested"].append(info["number_of_times_additional_data_requested"])
                     
-                    wandb.log({"Eval/episode_tree_score":info["tree_score"],"episode":episode_counts[i]})
+                    #wandb.log({"Eval/episode_tree_score":info["tree_score"],"episode":episode_counts[i]})
                     
                     if info['isTreeCorrectlyAnswered'] > 0.9:
                         cumulative_data = [

@@ -1,91 +1,0 @@
-/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/calculate_oracle.py:3: DeprecationWarning: 
-Pyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),
-(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)
-but was not found to be installed on your system.
-If this would cause problems for you,
-please provide us feedback at https://github.com/pandas-dev/pandas/issues/54466
-        
-  import pandas as pd
-wandb: Currently logged in as: juliangeralddcruz. Use `wandb login --relogin` to force relogin
-wandb: wandb version 0.17.4 is available!  To upgrade, please run:
-wandb:  $ pip install wandb --upgrade
-wandb: Tracking run with wandb version 0.16.2
-wandb: Run data is saved locally in /home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/wandb/run-20240718_233319-w4158uw0
-wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run run_oracle_decision_maker_(val)
-wandb: ⭐️ View project at https://wandb.ai/juliangeralddcruz/disaster_manager
-wandb: 🚀 View run at https://wandb.ai/juliangeralddcruz/disaster_manager/runs/w4158uw0
-wandb: - 0.000 MB of 0.000 MB uploadedwandb: \ 0.000 MB of 0.003 MB uploadedwandb: | 0.000 MB of 0.003 MB uploadedwandb: / 0.000 MB of 0.003 MB uploadedwandb: - 0.007 MB of 0.018 MB uploaded (0.003 MB deduped)wandb: \ 0.018 MB of 0.018 MB uploaded (0.003 MB deduped)wandb: | 0.018 MB of 0.018 MB uploaded (0.003 MB deduped)wandb: / 0.018 MB of 0.018 MB uploaded (0.003 MB deduped)wandb:                                                                                
-wandb: W&B sync reduced upload amount by 16.4%             
-wandb: 
-wandb: Run history:
-wandb:                     currentEpisode ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
-wandb:                      episode_ended ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
-wandb:            isTreeCorrectlyAnswered ███████████▁▁███▁██████████████▁███████▁
-wandb:       mean_isTreeCorrectlyAnswered ▁
-wandb: number_of_correctly_answered_trees ▁▁▁▂▂▂▂▂▃▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇████
-wandb:   number_of_wrongly_answered_trees ▁▁▁▁▁▂▂▂▂▂▂▃▃▃▄▄▄▅▅▅▅▅▅▅▅▆▆▆▆▆▆▆▇▇▇▇▇▇██
-wandb:       std_cisTreeCorrectlyAnswered ▁
-wandb:                               step ▁▁
-wandb:                            tree_id ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
-wandb: 
-wandb: Run summary:
-wandb:                     currentEpisode 500
-wandb:                      episode_ended True
-wandb:            isTreeCorrectlyAnswered 1.0
-wandb:       mean_isTreeCorrectlyAnswered 0.836
-wandb: number_of_correctly_answered_trees 418
-wandb:   number_of_wrongly_answered_trees 82
-wandb:       std_cisTreeCorrectlyAnswered 0.37028
-wandb:                               step 2501
-wandb:                            tree_id 500
-wandb: 
-wandb: 🚀 View run run_oracle_decision_maker_(val) at: https://wandb.ai/juliangeralddcruz/disaster_manager/runs/w4158uw0
-wandb: ️⚡ View job at https://wandb.ai/juliangeralddcruz/disaster_manager/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjI4ODEzOTk3MQ==/version_details/v1
-wandb: Synced 5 W&B file(s), 0 media file(s), 2 artifact file(s) and 0 other file(s)
-wandb: Find logs at: ./wandb/run-20240718_233319-w4158uw0/logs
-/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/calculate_oracle.py:3: DeprecationWarning: 
-Pyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),
-(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)
-but was not found to be installed on your system.
-If this would cause problems for you,
-please provide us feedback at https://github.com/pandas-dev/pandas/issues/54466
-        
-  import pandas as pd
-wandb: Currently logged in as: juliangeralddcruz. Use `wandb login --relogin` to force relogin
-wandb: wandb version 0.17.4 is available!  To upgrade, please run:
-wandb:  $ pip install wandb --upgrade
-wandb: Tracking run with wandb version 0.16.2
-wandb: Run data is saved locally in /home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/wandb/run-20240718_234102-iqmjg6dy
-wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run run_oracle_decision_maker_(train)
-wandb: ⭐️ View project at https://wandb.ai/juliangeralddcruz/disaster_manager
-wandb: 🚀 View run at https://wandb.ai/juliangeralddcruz/disaster_manager/runs/iqmjg6dy
-wandb: - 0.000 MB of 0.000 MB uploadedwandb: \ 0.000 MB of 0.003 MB uploadedwandb: | 0.003 MB of 0.003 MB uploadedwandb: / 0.003 MB of 0.003 MB uploadedwandb: - 0.013 MB of 0.013 MB uploadedwandb:                                                                                
-wandb: 
-wandb: Run history:
-wandb:                     currentEpisode ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
-wandb:                      episode_ended ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
-wandb:            isTreeCorrectlyAnswered █▁██████████████████████████▁███████▁███
-wandb:       mean_isTreeCorrectlyAnswered ▁
-wandb: number_of_correctly_answered_trees ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆▇▇▇▇▇▇███
-wandb:   number_of_wrongly_answered_trees ▁▁▁▂▂▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▆▆▆▆▆▆▇▇▇████
-wandb:       std_cisTreeCorrectlyAnswered ▁
-wandb:                               step ▁▁
-wandb:                            tree_id ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
-wandb: 
-wandb: Run summary:
-wandb:                     currentEpisode 500
-wandb:                      episode_ended True
-wandb:            isTreeCorrectlyAnswered 1.0
-wandb:       mean_isTreeCorrectlyAnswered 0.896
-wandb: number_of_correctly_answered_trees 448
-wandb:   number_of_wrongly_answered_trees 52
-wandb:       std_cisTreeCorrectlyAnswered 0.30526
-wandb:                               step 2501
-wandb:                            tree_id 500
-wandb: 
-wandb: 🚀 View run run_oracle_decision_maker_(train) at: https://wandb.ai/juliangeralddcruz/disaster_manager/runs/iqmjg6dy
-wandb: ️⚡ View job at https://wandb.ai/juliangeralddcruz/disaster_manager/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjI4ODEzOTk3MQ==/version_details/v1
-wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
-wandb: Find logs at: ./wandb/run-20240718_234102-iqmjg6dy/logs

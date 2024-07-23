@@ -92,7 +92,7 @@ class OracleSequenceValEnv():
         return dataset.loc[selected_idx]["ground_truth"], list(dataset.loc[selected_idx]["prediction_conf"]).index(max(dataset.loc[selected_idx]["prediction_conf"]))
 
     def _get_data_based_on_task(self, task: str):
-        dataset = pd.read_csv(os.path.join(self.CONFIG['data_path'], task, f"train_inference_results.csv"))
+        dataset = pd.read_csv(os.path.join(self.CONFIG['data_path'], task, f"val_inference_results.csv"))
         dataset["prediction_conf"] = dataset["prediction_conf"].apply(lambda x: list(map(float, x.strip("[]").split())))
         return dataset
     
@@ -201,11 +201,10 @@ def main():
             collected_dictionary['tree_score'].append(info["tree_score"])
             collected_dictionary["number_of_correctly_answered_trees"].append(info["number_of_correctly_answered_trees"])
             collected_dictionary["number_of_wrongly_answered_trees"].append(info["number_of_wrongly_answered_trees"])
-            wandb.log(info)
+#            wandb.log(info)
             env.reset()
 
     log_aggregate_stats(collected_dictionary,key="isTreeCorrectlyAnswered",log_string="isTreeCorrectlyAnswered",step=step_count)
-    log_aggregate_stats(collected_dictionary,key="tree_score",log_string="tree_score",step=episode_count)
     log_aggregate_stats(collected_dictionary,key="tree_score",log_string="tree_score",step=step_count)
     wandb.log({"number_of_correctly_answered_trees":max(collected_dictionary["number_of_correctly_answered_trees"])})
     wandb.log({"number_of_wrongly_answered_trees":max(collected_dictionary["number_of_wrongly_answered_trees"])})

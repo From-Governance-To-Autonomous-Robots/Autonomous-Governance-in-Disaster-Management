@@ -2,7 +2,7 @@ data_path: "/home/aaimscadmin/workspace/Autonomous-Governance-in-Disaster-Manage
 tasks: ["info","human","damage","satellite","drone"]
 phase: "train"
 
-total_timesteps: 2500
+total_timesteps: 80000000
 log_interval: 16000
 eval_interval: 16000
 eval_episodes: 50
@@ -12,7 +12,7 @@ log_dir: "decision_maker_orcale_logs"
 wandb:
   project: "disaster_manager"
   entity: "juliangeralddcruz"
-  name: "run_oracle_decision_maker_(train)"
+  name: "run_oracle_decision_maker_(val)"
 
 environment:
   train:
