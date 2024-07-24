@@ -74,6 +74,12 @@ const Quiz = ({ task, phase }) => {
     setUserData(userDocData);
     setCurrentTreeLevel(userDocData.current_tree_level);
 
+    // Check if game has ended
+    if (userDocData.gameEnded) {
+      navigate("/results");
+      return;
+    }
+
     // calculate score
     // Calculate the score here
     const currentTreeLevel = userDocData.current_tree_level;
@@ -198,29 +204,33 @@ const Quiz = ({ task, phase }) => {
   
   
   const handleCorrectAnswer = async (userDoc, userDocData, question, userAnswer, currentTree) => {
-    if (task === "drone-damage") {
-      await updateUserDoc(userDoc, {
-        current_tree_level: userDocData.current_tree_level + 1,
-        number_of_completed_trees: userDocData.number_of_completed_trees + 1,
-      });
-    }
-  
-    currentTree.points.push(1);
-    let index = tasksList.indexOf(task);
-    currentTree.isCompleted[index]=true;
     
-    currentTree.tree[task].question_id.push(question.question_id);
-    currentTree.tree[task].user_answer.push(userAnswer);
-  
-    const updates = {
-      [`responses.tree_${userDocData.current_tree_level}.tree.${task}.question_id`]: currentTree.tree[task].question_id,
-      [`responses.tree_${userDocData.current_tree_level}.tree.${task}.user_answer`]: currentTree.tree[task].user_answer,
-      [`responses.tree_${userDocData.current_tree_level}.points`]: currentTree.points,
-      [`responses.tree_${userDocData.current_tree_level}.isCompleted`]: currentTree.isCompleted,
-      [`responses.tree_${userDocData.current_tree_level}.isCorrectlyAnswered`]: calculateMean(currentTree.isCompleted),
-    };
-  
-    await updateUserDoc(userDoc, updates);
+    if (userDocData.responses[`tree_${userDocData.current_tree_level}`].tree_done === false){
+      if (task === "drone-damage") {
+        await updateUserDoc(userDoc, {
+          current_tree_level: userDocData.current_tree_level + 1,
+          number_of_completed_trees: userDocData.number_of_completed_trees + 1,
+          [`responses.tree_${userDocData.current_tree_level}.tree_done`]: true,
+        });
+      }
+    
+      currentTree.points.push(1);
+      let index = tasksList.indexOf(task);
+      currentTree.isCompleted[index]=true;
+      
+      currentTree.tree[task].question_id.push(question.question_id);
+      currentTree.tree[task].user_answer.push(userAnswer);
+    
+      const updates = {
+        [`responses.tree_${userDocData.current_tree_level}.tree.${task}.question_id`]: currentTree.tree[task].question_id,
+        [`responses.tree_${userDocData.current_tree_level}.tree.${task}.user_answer`]: currentTree.tree[task].user_answer,
+        [`responses.tree_${userDocData.current_tree_level}.points`]: currentTree.points,
+        [`responses.tree_${userDocData.current_tree_level}.isCompleted`]: currentTree.isCompleted,
+        [`responses.tree_${userDocData.current_tree_level}.isCorrectlyAnswered`]: calculateMean(currentTree.isCompleted),
+      };
+      
+      await updateUserDoc(userDoc, updates);
+    }
 
     const { path, state }  = checkNavigationHelper(task, phase);
     // navigate(userDocData.validation_pending === 0 ? "/results" : path, { state });
@@ -257,28 +267,31 @@ const Quiz = ({ task, phase }) => {
   };
   
   const handleNoResponseNecessary = async (userDoc, userDocData, question, userAnswer, currentTree) => {
-    if (task === "drone-damage") {
+    if (userDocData.responses[`tree_${userDocData.current_tree_level}`].tree_done === false){
+      if (task === "drone-damage") {
+        await updateUserDoc(userDoc, {
+          current_tree_level: userDocData.current_tree_level + 1,
+          number_of_failed_trees: userDocData.number_of_failed_trees + 1,
+          [`responses.tree_${userDocData.current_tree_level}.tree_done`]: true,
+        });
+      }
+    
+      currentTree.points.push(-5);
+      currentTree.isCompleted[tasksList.indexOf(task)]=false;
+      currentTree.gotWronglyAnswered[tasksList.indexOf(task)]=true;
+      currentTree.tree[task].question_id.push(question.question_id);
+      currentTree.tree[task].user_answer.push(userAnswer);
+    
       await updateUserDoc(userDoc, {
-        current_tree_level: userDocData.current_tree_level + 1,
-        number_of_failed_trees: userDocData.number_of_failed_trees + 1,
+        [`responses.tree_${userDocData.current_tree_level}.tree.${task}.question_id`]: currentTree.tree[task].question_id,
+        [`responses.tree_${userDocData.current_tree_level}.tree.${task}.user_answer`]: currentTree.tree[task].user_answer,
+        [`responses.tree_${userDocData.current_tree_level}.points`]: currentTree.points,
+        [`responses.tree_${userDocData.current_tree_level}.isCompleted`]: currentTree.isCompleted,
+        [`responses.tree_${userDocData.current_tree_level}.isCorrectlyAnswered`]: calculateMean(currentTree.isCompleted),
+        [`responses.tree_${userDocData.current_tree_level}.gotWronglyAnswered`]: currentTree.gotWronglyAnswered,
+        [`responses.tree_${userDocData.current_tree_level}.isWronglyAnswered`]: calculateMean(currentTree.gotWronglyAnswered),
       });
     }
-  
-    currentTree.points.push(-5);
-    currentTree.isCompleted[tasksList.indexOf(task)]=false;
-    currentTree.gotWronglyAnswered[tasksList.indexOf(task)]=true;
-    currentTree.tree[task].question_id.push(question.question_id);
-    currentTree.tree[task].user_answer.push(userAnswer);
-  
-    await updateUserDoc(userDoc, {
-      [`responses.tree_${userDocData.current_tree_level}.tree.${task}.question_id`]: currentTree.tree[task].question_id,
-      [`responses.tree_${userDocData.current_tree_level}.tree.${task}.user_answer`]: currentTree.tree[task].user_answer,
-      [`responses.tree_${userDocData.current_tree_level}.points`]: currentTree.points,
-      [`responses.tree_${userDocData.current_tree_level}.isCompleted`]: currentTree.isCompleted,
-      [`responses.tree_${userDocData.current_tree_level}.isCorrectlyAnswered`]: calculateMean(currentTree.isCompleted),
-      [`responses.tree_${userDocData.current_tree_level}.gotWronglyAnswered`]: currentTree.gotWronglyAnswered,
-      [`responses.tree_${userDocData.current_tree_level}.isWronglyAnswered`]: calculateMean(currentTree.gotWronglyAnswered),
-    });
     
     const { path, state }  = checkNavigationHelper(task, phase);
     // navigate(userDocData.validation_pending === 0 ? "/results" : path, { state });

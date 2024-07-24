@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../services/firebaseConfig';
 
-const useFirestore = (task,phase) => {
+const useFirestore = (task, phase) => {
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -15,17 +15,25 @@ const useFirestore = (task,phase) => {
       querySnapshot.forEach((doc) => {
         questionsList.push({ id: doc.id, ...doc.data() });
       });
-      
+
       if (questionsList.length > 0) {
         const randomIndex = Math.floor(Math.random() * questionsList.length);
-        setQuestion(questionsList[randomIndex]);
+        let selectedQuestion = questionsList[randomIndex];
+        
+        // Remove URLs from the text
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        if (selectedQuestion.text) {
+          selectedQuestion.text = selectedQuestion.text.replace(urlRegex, '');
+        }
+        
+        setQuestion(selectedQuestion);
       }
-      
+
       setLoading(false);
     };
 
     fetchQuestions();
-  }, [task,phase]);
+  }, [task, phase]);
 
   const storedQuestion = question;
   return { storedQuestion, loading };

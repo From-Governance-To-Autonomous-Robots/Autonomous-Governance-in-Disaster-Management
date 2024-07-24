@@ -1,44 +1,117 @@
+/* HomePage.css */
 .home-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-  }
-  
-  .message-box {
-    text-align: center;
-    padding: 20px;
-    background-color: #fff;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
-  }
-  
-  .message-box h1 {
-    font-size: 24px;
-    margin-bottom: 15px;
-  }
-  
-  .message-box p {
-    font-size: 16px;
-    margin-bottom: 15px;
-  }
-  
-  .agree-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .agree-button:hover {
-    background-color: #0056b3;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(to bottom, #2a5298, #1e3c72);
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+  padding: 20px; /* Added padding for better responsiveness */
+  box-sizing: border-box; /* Ensure padding is included in total width/height */
+}
+
+.message-box {
+  text-align: left;
+  padding: 30px;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 2px solid #ddd;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  max-width: 800px;
+  width: 100%;
+  color: #fff;
+  overflow-y: auto; /* Ensure scrollable content if needed */
+  max-height: 90vh; /* Prevent overflow beyond viewport */
+}
+
+.message-box h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.message-box .section {
+  margin-bottom: 20px;
+}
+
+.message-box .section h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.message-box .section p, .message-box .section ul {
+  font-size: 16px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.message-box .section ul {
+  padding-left: 20px;
+}
+
+.message-box .section ul li {
+  margin-bottom: 5px;
+}
+
+.image-container {
+  text-align: center;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.decision-tree-image {
+  width: 100%; /* Ensure it fits within the container */
+  max-width: 400px; /* Limit the maximum width */
+  height: auto; /* Maintain aspect ratio */
+  margin-top: 10px;
+  transition: transform 0.3s ease;
+}
+
+.image-container:hover .decision-tree-image {
+  transform: scale(1.05);
+}
+
+.agree-button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.agree-button:hover {
+  background-color: #218838;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+  border-radius: 10px;
+}
+
+.modal-image {
+  width: 100%;
+  height: auto;
+  max-height: 90vh; /* Limit the maximum height */
+  border-radius: 10px;
+}

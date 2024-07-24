@@ -28,7 +28,7 @@ const HelperPopup = ({ task, phase, mappingDict, onClose }) => {
           <div key={data.id} className="helper-item">
             <h3>{mappingDict[task][data.correct_answer]}</h3>
             <p>{data.text}</p>
-            {data.image && <img src={data.image} alt="helper example" className="helper-image" />}
+            {data.image && <div className="helper-image-container"><img src={data.image} alt="helper example" className="helper-image" /></div>}
           </div>
         ))}
       </div>

@@ -17,8 +17,10 @@
   color: #fff;
   padding: 20px;
   border-radius: 10px;
-  max-width: 500px;
-  width: 90%;
+  max-width: 90%;
+  width: 500px;
+  max-height: 90%;
+  overflow-y: auto;
   position: relative;
 }
 
@@ -42,11 +44,20 @@
   color: #f39c12;
 }
 
+.helper-image-container {
+  width: 100%;
+  max-width: 500px;
+  height: 300px; /* Fixed height */
+  margin-top: 10px;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  overflow: hidden; /* Ensure the image does not overflow the container */
+}
+
 .helper-image {
   width: 100%;
-  height: auto;
-  border-radius: 5px;
-  margin-top: 5px;
+  height: 100%;
+  object-fit: contain; /* Scale the image to fit within the container */
 }
 
 .close-button {

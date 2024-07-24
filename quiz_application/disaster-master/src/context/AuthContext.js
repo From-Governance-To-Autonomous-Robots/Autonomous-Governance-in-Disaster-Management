@@ -24,12 +24,13 @@ export const AuthProvider = ({ children }) => {
           await setDoc(userDoc, {
               user_id: user.uid,
               consent_agree: true,
-              training_available: 2,
+              training_available: 1,
               current_tree_level: 0,
               gameEnded:false,
               responses: {
                 tree_0: {
                   points: [],
+                  tree_done:false,
                   isCorrectlyAnswered:0,
                   isWronglyAnswered:0,
                   isGatherAdditionalDataRequested:0,
@@ -66,6 +67,7 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_1: {
                   points: [],
+                  tree_done:false,
                   isCorrectlyAnswered:0,
                   isWronglyAnswered:0,
                   isGatherAdditionalDataRequested:0,
@@ -102,6 +104,7 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_2: {
                   points: [],
+                  tree_done:false,
                   isCorrectlyAnswered:0,
                   isWronglyAnswered:0,
                   isGatherAdditionalDataRequested:0,
@@ -138,6 +141,7 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_3: {
                   points: [],
+                  tree_done:false,
                   isCorrectlyAnswered:0,
                   isWronglyAnswered:0,
                   isGatherAdditionalDataRequested:0,
@@ -174,6 +178,7 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_4: {
                   points: [],
+                  tree_done:false,
                   isCorrectlyAnswered:0,
                   isWronglyAnswered:0,
                   isGatherAdditionalDataRequested:0,
@@ -232,12 +237,13 @@ export const AuthProvider = ({ children }) => {
         await setDoc(userDoc, {
             user_id: user.uid,
             consent_agree: true,
-            training_available: 2,
+            training_available: 1,
             gameEnded:false,
             current_tree_level: 0,
             responses: {
               tree_0: {
                 points: [],
+                tree_done:false,
                 isCorrectlyAnswered:0,
                 isWronglyAnswered:0,
                 isGatherAdditionalDataRequested:0,
@@ -279,6 +285,7 @@ export const AuthProvider = ({ children }) => {
               },
               tree_1: {
                 points: [],
+                tree_done:false,
                 isCorrectlyAnswered:0,
                 isWronglyAnswered:0,
                 isGatherAdditionalDataRequested:0,
@@ -320,6 +327,7 @@ export const AuthProvider = ({ children }) => {
               },
               tree_2: {
                 points: [],
+                tree_done:false,
                 isCorrectlyAnswered:0,
                 isWronglyAnswered:0,
                 isGatherAdditionalDataRequested:0,
@@ -361,6 +369,7 @@ export const AuthProvider = ({ children }) => {
               },
               tree_3: {
                 points: [],
+                tree_done:false,
                 isCorrectlyAnswered:0,
                 isWronglyAnswered:0,
                 isGatherAdditionalDataRequested:0,
@@ -402,6 +411,7 @@ export const AuthProvider = ({ children }) => {
               },
               tree_4: {
                 points: [],
+                tree_done:false,
                 isCorrectlyAnswered:0,
                 isWronglyAnswered:0,
                 isGatherAdditionalDataRequested:0,
