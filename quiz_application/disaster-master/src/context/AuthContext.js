@@ -31,7 +31,11 @@ export const AuthProvider = ({ children }) => {
                 tree_0: {
                   points: [],
                   isCorrectlyAnswered:0,
+                  isWronglyAnswered:0,
+                  isGatherAdditionalDataRequested:0,
                   isCompleted: [false,false,false,false,false],
+                  gotWronglyAnswered:[false,false,false,false,false],
+                  gotGatherAdditionalDataRequested: [false,false,false,false,false],
                   tree: {
                     info: {
                       user_answer: [],
@@ -63,7 +67,11 @@ export const AuthProvider = ({ children }) => {
                 tree_1: {
                   points: [],
                   isCorrectlyAnswered:0,
+                  isWronglyAnswered:0,
+                  isGatherAdditionalDataRequested:0,
                   isCompleted: [false,false,false,false,false],
+                  gotWronglyAnswered:[false,false,false,false,false],
+                  gotGatherAdditionalDataRequested: [false,false,false,false,false],
                   tree: {
                     info: {
                       user_answer: [],
@@ -95,7 +103,11 @@ export const AuthProvider = ({ children }) => {
                 tree_2: {
                   points: [],
                   isCorrectlyAnswered:0,
+                  isWronglyAnswered:0,
+                  isGatherAdditionalDataRequested:0,
                   isCompleted: [false,false,false,false,false],
+                  gotWronglyAnswered:[false,false,false,false,false],
+                  gotGatherAdditionalDataRequested: [false,false,false,false,false],
                   tree: {
                     info: {
                       user_answer: [],
@@ -127,7 +139,11 @@ export const AuthProvider = ({ children }) => {
                 tree_3: {
                   points: [],
                   isCorrectlyAnswered:0,
+                  isWronglyAnswered:0,
+                  isGatherAdditionalDataRequested:0,
                   isCompleted: [false,false,false,false,false],
+                  gotWronglyAnswered:[false,false,false,false,false],
+                  gotGatherAdditionalDataRequested: [false,false,false,false,false],
                   tree: {
                     info: {
                       user_answer: [],
@@ -159,7 +175,11 @@ export const AuthProvider = ({ children }) => {
                 tree_4: {
                   points: [],
                   isCorrectlyAnswered:0,
+                  isWronglyAnswered:0,
+                  isGatherAdditionalDataRequested:0,
                   isCompleted: [false,false,false,false,false],
+                  gotWronglyAnswered:[false,false,false,false,false],
+                  gotGatherAdditionalDataRequested: [false,false,false,false,false],
                   tree: {
                     info: {
                       user_answer: [],
@@ -190,6 +210,9 @@ export const AuthProvider = ({ children }) => {
                 }
               },
               score: 0,
+              CorrectlyAnswered:0,
+              WronglyAnswered:0,
+              GatherAdditionalDataRequested:0,
               number_of_completed_trees: 0,
               number_of_failed_trees: 0,
               feedback: ""
@@ -216,7 +239,11 @@ export const AuthProvider = ({ children }) => {
               tree_0: {
                 points: [],
                 isCorrectlyAnswered:0,
+                isWronglyAnswered:0,
+                isGatherAdditionalDataRequested:0,
                 isCompleted: [false,false,false,false,false],
+                gotWronglyAnswered:[false,false,false,false,false],
+                gotGatherAdditionalDataRequested: [false,false,false,false,false],
                 tree: {
                   info: {
                     user_answer: [],
@@ -253,7 +280,11 @@ export const AuthProvider = ({ children }) => {
               tree_1: {
                 points: [],
                 isCorrectlyAnswered:0,
+                isWronglyAnswered:0,
+                isGatherAdditionalDataRequested:0,
                 isCompleted: [false,false,false,false,false],
+                gotWronglyAnswered:[false,false,false,false,false],
+                gotGatherAdditionalDataRequested: [false,false,false,false,false],
                 tree: {
                   info: {
                     user_answer: [],
@@ -290,7 +321,11 @@ export const AuthProvider = ({ children }) => {
               tree_2: {
                 points: [],
                 isCorrectlyAnswered:0,
+                isWronglyAnswered:0,
+                isGatherAdditionalDataRequested:0,
                 isCompleted: [false,false,false,false,false],
+                gotWronglyAnswered:[false,false,false,false,false],
+                gotGatherAdditionalDataRequested: [false,false,false,false,false],
                 tree: {
                   info: {
                     user_answer: [],
@@ -327,7 +362,11 @@ export const AuthProvider = ({ children }) => {
               tree_3: {
                 points: [],
                 isCorrectlyAnswered:0,
+                isWronglyAnswered:0,
+                isGatherAdditionalDataRequested:0,
                 isCompleted: [false,false,false,false,false],
+                gotWronglyAnswered:[false,false,false,false,false],
+                gotGatherAdditionalDataRequested: [false,false,false,false,false],
                 tree: {
                   info: {
                     user_answer: [],
@@ -364,7 +403,11 @@ export const AuthProvider = ({ children }) => {
               tree_4: {
                 points: [],
                 isCorrectlyAnswered:0,
+                isWronglyAnswered:0,
+                isGatherAdditionalDataRequested:0,
                 isCompleted: [false,false,false,false,false],
+                gotWronglyAnswered:[false,false,false,false,false],
+                gotGatherAdditionalDataRequested: [false,false,false,false,false],
                 tree: {
                   info: {
                     user_answer: [],
@@ -400,6 +443,9 @@ export const AuthProvider = ({ children }) => {
               }
             },
             score: 0,
+            CorrectlyAnswered:0,
+            WronglyAnswered:0,
+            GatherAdditionalDataRequested:0,
             number_of_completed_trees: 0,
             number_of_failed_trees: 0,
             feedback: ""

@@ -4,7 +4,7 @@ import Score from '../components/Score';
 const ResultPage = () => {
   return (
     <div>
-      <h2>Your results</h2>
+      {/* <h2>Your results</h2> */}
       <Score/>
     </div>
   );

@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/Question.css';
+import HelperPopup from './HelperPopup';
 
 const Question = ({ question, currentTreeLevel, handleAnswer, handleEndGame, mappingDict, task, currentTreeScore, overallScore }) => {
+  const [isHelpVisible, setIsHelpVisible] = useState(false);
+
+  const toggleHelp = () => {
+    setIsHelpVisible(!isHelpVisible);
+  };
+
   return (
     <div className="question-container">
+      <button className="help-button" onClick={toggleHelp}>
+        <span className="help-icon">❓</span> Help
+      </button>
+      {isHelpVisible && <HelperPopup task={task} phase="train" mappingDict={mappingDict} onClose={toggleHelp} />}
       <div className="score-container">
         <h1>Overall Score: {Math.round(overallScore * 100)}</h1>
         <h1>Scenario Score: {Math.round(currentTreeScore * 100)}</h1>
       </div>
       <h1 className="scenario-title">Scenario-{currentTreeLevel}</h1>
-      <div className="image-container">
-        <img src={question.image} alt="question" className="question-image" />
+      <div className="question-content">
+        <div className="image-container">
+          <img src={question.image} alt="question" className="question-image" />
+        </div>
       </div>
       <p className="question-text"><strong>{question.text}</strong></p>
       <p className="question-format"><strong>Question: {question.question_format}</strong></p>
