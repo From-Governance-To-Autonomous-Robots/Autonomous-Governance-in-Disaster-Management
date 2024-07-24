@@ -45,8 +45,6 @@
 
 .help-button {
   position: relative;
-  /* top: 20px; */
-  /* left: 20px; */
   margin: 20px;
   background-color: #f39c12;
   color: white;
@@ -93,11 +91,11 @@
   color: #e44100;
 }
 
-.question-format  {
+.question-format {
   font-style: italic;
-  font-weight:bolder;
+  font-weight: bolder;
   margin: 20px 0;
-  font-size:x-large;
+  font-size: x-large;
   color: #f4f3f2;
 }
 

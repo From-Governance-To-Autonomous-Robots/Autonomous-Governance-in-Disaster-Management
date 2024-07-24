@@ -23,6 +23,14 @@ export const AuthProvider = ({ children }) => {
         
           await setDoc(userDoc, {
               user_id: user.uid,
+              nationality:"",
+              age:0,
+              gender:"",
+              experience:{
+                decision_maker:false,
+                volunteer:false,
+                victim:false
+              },
               consent_agree: true,
               training_available: 1,
               current_tree_level: 0,
@@ -30,6 +38,7 @@ export const AuthProvider = ({ children }) => {
               responses: {
                 tree_0: {
                   points: [],
+                  tree_score:0,
                   tree_done:false,
                   isCorrectlyAnswered:0,
                   isWronglyAnswered:0,
@@ -67,6 +76,7 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_1: {
                   points: [],
+                  tree_score:0,
                   tree_done:false,
                   isCorrectlyAnswered:0,
                   isWronglyAnswered:0,
@@ -104,6 +114,7 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_2: {
                   points: [],
+                  tree_score:0,
                   tree_done:false,
                   isCorrectlyAnswered:0,
                   isWronglyAnswered:0,
@@ -141,6 +152,7 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_3: {
                   points: [],
+                  tree_score:0,
                   tree_done:false,
                   isCorrectlyAnswered:0,
                   isWronglyAnswered:0,
@@ -178,6 +190,7 @@ export const AuthProvider = ({ children }) => {
                 },
                 tree_4: {
                   points: [],
+                  tree_score:0,
                   tree_done:false,
                   isCorrectlyAnswered:0,
                   isWronglyAnswered:0,
@@ -236,6 +249,14 @@ export const AuthProvider = ({ children }) => {
         
         await setDoc(userDoc, {
             user_id: user.uid,
+            nationality:"",
+            age:0,
+            gender:"",
+            experience:{
+              decision_maker:false,
+              volunteer:false,
+              victim:false
+            },
             consent_agree: true,
             training_available: 1,
             gameEnded:false,
@@ -244,6 +265,7 @@ export const AuthProvider = ({ children }) => {
               tree_0: {
                 points: [],
                 tree_done:false,
+                tree_score:0,
                 isCorrectlyAnswered:0,
                 isWronglyAnswered:0,
                 isGatherAdditionalDataRequested:0,
@@ -286,6 +308,7 @@ export const AuthProvider = ({ children }) => {
               tree_1: {
                 points: [],
                 tree_done:false,
+                tree_score:0,
                 isCorrectlyAnswered:0,
                 isWronglyAnswered:0,
                 isGatherAdditionalDataRequested:0,
@@ -328,6 +351,7 @@ export const AuthProvider = ({ children }) => {
               tree_2: {
                 points: [],
                 tree_done:false,
+                tree_score:0,
                 isCorrectlyAnswered:0,
                 isWronglyAnswered:0,
                 isGatherAdditionalDataRequested:0,
@@ -370,6 +394,7 @@ export const AuthProvider = ({ children }) => {
               tree_3: {
                 points: [],
                 tree_done:false,
+                tree_score:0,
                 isCorrectlyAnswered:0,
                 isWronglyAnswered:0,
                 isGatherAdditionalDataRequested:0,
@@ -412,6 +437,7 @@ export const AuthProvider = ({ children }) => {
               tree_4: {
                 points: [],
                 tree_done:false,
+                tree_score:0,
                 isCorrectlyAnswered:0,
                 isWronglyAnswered:0,
                 isGatherAdditionalDataRequested:0,

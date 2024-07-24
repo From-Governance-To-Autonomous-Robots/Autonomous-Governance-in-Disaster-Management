@@ -26,9 +26,8 @@ const Score = () => {
     const userDoc = doc(db, 'users', user.uid);
     const userDocSnapshot = await getDoc(userDoc);
     const userDocData = userDocSnapshot.data();
-    let oldFeedback = userDocData.feedback || '';
     await updateDoc(userDoc, {
-      feedback: `[START] ${oldFeedback}. [END] ${feedback}`,
+      feedback
     });
     alert('Feedback submitted successfully!');
   };
@@ -74,7 +73,7 @@ const Score = () => {
         <div className="feedback-section">
           <h3>Share Your Experience</h3>
           <textarea
-            placeholder="Share your experience with decision making, how you felt about making the decisions in the game, your qualifications, etc."
+            placeholder="Share your experience with how you felt about making the decisions in the game, etc."
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
             className="feedback-textarea"

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../styles/Question.css';
 import HelperPopup from './HelperPopup';
 
-const Question = ({ question, currentTreeLevel, handleAnswer, handleEndGame, mappingDict, task, currentTreeScore, overallScore }) => {
+const Question = ({ question, currentTreeLevel, handleAnswer, handleEndGame, mappingDict, task, phase, currentTreeScore, overallScore }) => {
   const [isHelpVisible, setIsHelpVisible] = useState(false);
 
   const toggleHelp = () => {
@@ -15,11 +15,13 @@ const Question = ({ question, currentTreeLevel, handleAnswer, handleEndGame, map
         <span className="help-icon">❓</span> Help
       </button>
       {isHelpVisible && <HelperPopup task={task} phase="train" mappingDict={mappingDict} onClose={toggleHelp} />}
-      <div className="score-container">
-        <h1>Overall Score: {Math.round(overallScore * 100)}</h1>
-        <h1>Scenario Score: {Math.round(currentTreeScore * 100)}</h1>
-      </div>
-      <h1 className="scenario-title">Scenario-{currentTreeLevel}</h1>
+      {phase !== "train" && (
+        <div className="score-container">
+          <h1>Overall Score: {overallScore}</h1>
+          <h1>Scenario Score: {currentTreeScore}</h1>
+        </div>
+      )}
+      <h1 className="scenario-title">Scenario-{phase === "train" ? "Train" : currentTreeLevel}</h1>
       <div className="question-content">
         <div className="image-container">
           <img src={question.image} alt="question" className="question-image" />

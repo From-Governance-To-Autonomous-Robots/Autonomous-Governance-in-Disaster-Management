@@ -18,18 +18,8 @@ const HomePage = () => {
       await updateDoc(userDoc, {
         consent_agree: true
       });
-      navigate('/training/victim/checkaid', { state: { task: 'info', phase: 'train' } });
+      navigate('/user/form');
     }
-  };
-
-  const handleFeedbackSubmit = async () => {
-    const userDoc = doc(db, 'users', user.uid);
-    const userDocSnapshot = await getDoc(userDoc);
-    const userDocData = userDocSnapshot.data();
-    await updateDoc(userDoc, {
-      feedback
-    });
-    alert('Response Recorded');
   };
 
   const toggleModal = () => {
@@ -82,19 +72,6 @@ const HomePage = () => {
             </ul>
             Your responses will be compared with correct decisions at each level and scored accordingly. Please try to complete at least 5 scenarios, which will require approximately 10 minutes of your time.
           </p>
-        </div>
-        <div className="feedback-section">
-          <h3>Share Your Experience</h3>
-          <textarea
-            placeholder="Share your experience with decision making, your qualifications, etc."
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            className="feedback-textarea"
-          />
-          <button onClick={handleFeedbackSubmit} className="feedback-submit-button">
-            Submit Feedback
-          </button>
-          <p className="disclaimer-text">This information is collected for socio-cultural characteristic comparisons.</p>
         </div>
         <div className="section">
           <h2>Consent</h2>

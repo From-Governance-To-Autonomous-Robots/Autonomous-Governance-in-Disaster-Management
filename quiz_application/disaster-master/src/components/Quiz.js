@@ -53,6 +53,10 @@ const calculateMean= (booleanArray)=>{
   return mean;
 }
 
+const calculateSum = (integerArray)=>{
+  return integerArray.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+}
+
 const Quiz = ({ task, phase }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -85,19 +89,18 @@ const Quiz = ({ task, phase }) => {
     const currentTreeLevel = userDocData.current_tree_level;
     const responses = userDocData.responses;
 
-    let isCorrectlyAnsweredList = [];
+    let pointsList = [];
 
     for (let i = 0; i <= currentTreeLevel; i++) {
         const treeKey = `tree_${i}`;
-        if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('isCorrectlyAnswered')) {
-            isCorrectlyAnsweredList.push(responses[treeKey].isCorrectlyAnswered);
+        if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('points')) {
+          pointsList.push(...responses[treeKey].points);
         }
     }
-
-    const score = isCorrectlyAnsweredList.reduce((acc, val) => acc + val, 0) / isCorrectlyAnsweredList.length;
+    const score = pointsList.reduce((acc, val) => acc + val, 0) / pointsList.length;
     setOverallScore(score);
     
-    setCurrentTreeScore(responses[`tree_${currentTreeLevel}`].isCorrectlyAnswered)
+    setCurrentTreeScore(responses[`tree_${currentTreeLevel}`].tree_score)
   };
 
   useEffect(() => {
@@ -150,6 +153,7 @@ const Quiz = ({ task, phase }) => {
     let isCorrectlyAnsweredList = [];
     let isWronglyAnsweredList = [];
     let isGatherAdditionalDataRequestedList = [];
+    let pointsList = [];
 
     for (let i = 0; i <= currentTreeLevel; i++) {
         const treeKey = `tree_${i}`;
@@ -162,15 +166,19 @@ const Quiz = ({ task, phase }) => {
         if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('isGatherAdditionalDataRequested')) {
           isGatherAdditionalDataRequestedList.push(responses[treeKey].isGatherAdditionalDataRequested);
         }
+        if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('points')) {
+          pointsList.push(responses[treeKey].points);
+      }
     }
 
-    const score = isCorrectlyAnsweredList.reduce((acc, val) => acc + val, 0) / isCorrectlyAnsweredList.length;
+    const score = pointsList.reduce((acc, val) => acc + val, 0) / pointsList.length;
+    const correctlyAnswered = isCorrectlyAnsweredList.reduce((acc, val) => acc + val, 0) / isCorrectlyAnsweredList.length;
     const additionalDataScore = isGatherAdditionalDataRequestedList.reduce((acc, val) => acc + val, 0) / isGatherAdditionalDataRequestedList.length;
     const wronglyAnsweredScore = isWronglyAnsweredList.reduce((acc, val) => acc + val, 0) / isWronglyAnsweredList.length;
     // Update the score in the document
     await updateDoc(userDoc, {
         score: score,
-        CorrectlyAnswered:score,
+        CorrectlyAnswered:correctlyAnswered,
         WronglyAnswered:wronglyAnsweredScore,
         GatherAdditionalDataRequested:additionalDataScore,
     });
@@ -227,6 +235,7 @@ const Quiz = ({ task, phase }) => {
         [`responses.tree_${userDocData.current_tree_level}.points`]: currentTree.points,
         [`responses.tree_${userDocData.current_tree_level}.isCompleted`]: currentTree.isCompleted,
         [`responses.tree_${userDocData.current_tree_level}.isCorrectlyAnswered`]: calculateMean(currentTree.isCompleted),
+        [`responses.tree_${userDocData.current_tree_level}.tree_score`]: calculateSum(currentTree.points),
       };
       
       await updateUserDoc(userDoc, updates);
@@ -255,6 +264,7 @@ const Quiz = ({ task, phase }) => {
       [`responses.tree_${userDocData.current_tree_level}.gotGatherAdditionalDataRequested`]: currentTree.gotGatherAdditionalDataRequested,
       [`responses.tree_${userDocData.current_tree_level}.isGatherAdditionalDataRequested`]: calculateMean(currentTree.gotGatherAdditionalDataRequested),
       [`responses.tree_${userDocData.current_tree_level}.tree.${task}.availableAdditionalData`]: currentTree.tree[task].availableAdditionalData,
+      [`responses.tree_${userDocData.current_tree_level}.tree_score`]: calculateSum(currentTree.points),
     });
     
     let previousTaskIndex = tasksList.indexOf(task) - 1;
@@ -300,6 +310,7 @@ const Quiz = ({ task, phase }) => {
         [`responses.tree_${userDocData.current_tree_level}.isCorrectlyAnswered`]: calculateMean(currentTree.isCompleted),
         [`responses.tree_${userDocData.current_tree_level}.gotWronglyAnswered`]: currentTree.gotWronglyAnswered,
         [`responses.tree_${userDocData.current_tree_level}.isWronglyAnswered`]: calculateMean(currentTree.gotWronglyAnswered),
+        [`responses.tree_${userDocData.current_tree_level}.tree_score`]: calculateSum(currentTree.points),
       });
     }
     
@@ -361,6 +372,7 @@ const Quiz = ({ task, phase }) => {
         handleEndGame={handleEndGame}
         mappingDict={MAPPING_DICT}
         task={task}
+        phase={phase}
         currentTreeScore={currentTreeScore}
         overallScore={overallScore}
       />

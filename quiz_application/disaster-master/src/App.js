@@ -6,12 +6,18 @@ import './styles/global.css';
 import { AuthProvider } from './context/AuthContext';
 import ResultPage from './pages/ResultPage';
 import DummyQuizPage from './pages/DummyQuiz';
+import UserInfoForm from './components/UserInfoForm';
+import HelpPage from './pages/HelpPage';
+import TutorialPage from './pages/TutorialPage';
 
 const App = () => {
   return (
     <AuthProvider>
       <Routes>
         <Route path="/" element={<HomePage/>} />
+        <Route path='/user/form' element={<UserInfoForm/>}/>
+        <Route path='/tutorial/data' element={<HelpPage/>}/>
+        <Route path='/tutorial/game' element={<TutorialPage/>}/>
         <Route path="/training/victim/checkaid" element={<QuizPage task={"info"} phase={"train"}/>} />
         <Route path="/training/victim/typeofaid" element={<QuizPage task={"human"} phase={"train"}/>} />
         <Route path="/training/victim/typeofdamage" element={<QuizPage task={"damage"} phase={"train"}/>} />
