@@ -24,8 +24,11 @@ const Score = () => {
 
   const handleFeedbackSubmit = async () => {
     const userDoc = doc(db, 'users', user.uid);
+    const userDocSnapshot = await getDoc(userDoc);
+    const userDocData = userDocSnapshot.data();
+    let oldFeedback = userDocData.feedback || '';
     await updateDoc(userDoc, {
-      feedback
+      feedback: `[START] ${oldFeedback}. [END] ${feedback}`,
     });
     alert('Feedback submitted successfully!');
   };

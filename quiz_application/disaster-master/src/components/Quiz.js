@@ -239,7 +239,7 @@ const Quiz = ({ task, phase }) => {
   
   const handleGatherAdditionalData = async (userDoc, userDocData, question, userAnswer, currentTree) => {
     if (currentTree.tree[task].availableAdditionalData === 0) {
-      alert("You have used up all Additional Data Credits for this task, Please Take a Conclusive Decision on the Task!");
+      alert("You have requested the maximum amount of additional examples. Please select an answer for the task.");
       return;
     }
   
@@ -259,7 +259,17 @@ const Quiz = ({ task, phase }) => {
     
     let previousTaskIndex = tasksList.indexOf(task) - 1;
     if (previousTaskIndex <0){
-      previousTaskIndex = 0
+      previousTaskIndex = 4
+    }
+    let newTask = tasksList[previousTaskIndex]
+    const { path, state } = checkNavigationHelper(newTask, phase);
+    navigate('/loading', { state: { task: newTask, phase: phase } });
+  };
+
+  const handleGatherAdditionalDataTrain = async () => {
+    let previousTaskIndex = tasksList.indexOf(task) - 1;
+    if (previousTaskIndex <0){
+      previousTaskIndex = 4
     }
     let newTask = tasksList[previousTaskIndex]
     const { path, state } = checkNavigationHelper(newTask, phase);
@@ -323,6 +333,9 @@ const Quiz = ({ task, phase }) => {
           navigate(path, { state });
         }
       } 
+      else if (answer === "Gather Additional Data"){
+        handleGatherAdditionalDataTrain();
+      }
       else {
         // send alert pop up with correct answer and ask user to select the correct answer . 
         alert("Incorrect answer. The correct answer is " + correctMappedAnswer);

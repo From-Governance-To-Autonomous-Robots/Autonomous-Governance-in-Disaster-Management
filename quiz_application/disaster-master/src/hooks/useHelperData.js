@@ -26,7 +26,13 @@ const useHelperData = (task, phase) => {
       const randomHelperData = Object.keys(helperDataList).map((key) => {
         const dataList = helperDataList[key];
         const randomIndex = Math.floor(Math.random() * dataList.length);
-        return dataList[randomIndex];
+        let selectedQuestion = dataList[randomIndex];
+        // Remove URLs from the text
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        if (selectedQuestion.text) {
+          selectedQuestion.text = selectedQuestion.text.replace(urlRegex, '');
+        }
+        return selectedQuestion
       });
 
       setHelperData(randomHelperData);
