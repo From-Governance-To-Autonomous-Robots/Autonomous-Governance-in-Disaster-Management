@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../services/firebaseConfig';
 import { checkNavigationHelper } from '../services/navigationHelper';
+import { createNewTree } from '../services/createNewTree';
 
 
 const MAPPING_DICT = {
@@ -135,6 +136,18 @@ const Quiz = ({ task, phase }) => {
     }
   };
 
+  const createTreeIfNotExists = async (userDoc, treeLevel) => {
+    const userDocSnapshot = await getDoc(userDoc);
+    const userDocData = userDocSnapshot.data();
+    if (!userDocData.responses[`tree_${treeLevel}`]) {
+      const newTree = createNewTree(treeLevel);
+      await updateDoc(userDoc, {
+        [`responses.tree_${treeLevel}`]: newTree[`tree_${treeLevel}`],
+      });
+      fetchUserData();
+    }
+  };
+
   const handleEndGame = async () => {
     // End game here
     const userDoc = doc(db, 'users', user.uid);
@@ -157,18 +170,22 @@ const Quiz = ({ task, phase }) => {
 
     for (let i = 0; i <= currentTreeLevel; i++) {
         const treeKey = `tree_${i}`;
-        if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('isCorrectlyAnswered')) {
-            isCorrectlyAnsweredList.push(responses[treeKey].isCorrectlyAnswered);
+        if (responses[treeKey].hasOwnProperty('tree_done')){
+          if (responses[treeKey].tree_done){
+            if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('isCorrectlyAnswered')) {
+              isCorrectlyAnsweredList.push(responses[treeKey].isCorrectlyAnswered);
+            }
+            if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('isWronglyAnswered')) {
+              isWronglyAnsweredList.push(responses[treeKey].isWronglyAnswered);
+            }
+            if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('isGatherAdditionalDataRequested')) {
+              isGatherAdditionalDataRequestedList.push(responses[treeKey].isGatherAdditionalDataRequested);
+            }
+            if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('points')) {
+              pointsList.push(...responses[treeKey].points);
+            }
+          }
         }
-        if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('isWronglyAnswered')) {
-          isWronglyAnsweredList.push(responses[treeKey].isWronglyAnswered);
-        }
-        if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('isGatherAdditionalDataRequested')) {
-          isGatherAdditionalDataRequestedList.push(responses[treeKey].isGatherAdditionalDataRequested);
-        }
-        if (responses.hasOwnProperty(treeKey) && responses[treeKey].hasOwnProperty('points')) {
-          pointsList.push(responses[treeKey].points);
-      }
     }
 
     const score = pointsList.reduce((acc, val) => acc + val, 0) / pointsList.length;
@@ -197,6 +214,8 @@ const Quiz = ({ task, phase }) => {
       navigate("/results");
       return;
     }
+    await createTreeIfNotExists(userDoc, userDocData.current_tree_level);
+    await createTreeIfNotExists(userDoc, userDocData.current_tree_level + 1);
   
     let currentTree = userDocData.responses[`tree_${userDocData.current_tree_level}`];
   
@@ -207,7 +226,6 @@ const Quiz = ({ task, phase }) => {
     } else { 
       handleNoResponseNecessary(userDoc, userDocData, question, userAnswer, currentTree);
     }
-    
   };
   
   
@@ -226,7 +244,7 @@ const Quiz = ({ task, phase }) => {
       let index = tasksList.indexOf(task);
       currentTree.isCompleted[index]=true;
       
-      currentTree.tree[task].question_id.push(question.question_id);
+      currentTree.tree[task].question_id.push(question.id);
       currentTree.tree[task].user_answer.push(userAnswer);
     
       const updates = {
@@ -299,7 +317,7 @@ const Quiz = ({ task, phase }) => {
       currentTree.points.push(-5);
       currentTree.isCompleted[tasksList.indexOf(task)]=false;
       currentTree.gotWronglyAnswered[tasksList.indexOf(task)]=true;
-      currentTree.tree[task].question_id.push(question.question_id);
+      currentTree.tree[task].question_id.push(question.id);
       currentTree.tree[task].user_answer.push(userAnswer);
     
       await updateUserDoc(userDoc, {

@@ -25,7 +25,6 @@ const useFirestore = (task, phase) => {
         if (selectedQuestion.text) {
           selectedQuestion.text = selectedQuestion.text.replace(urlRegex, '');
         }
-        
         setQuestion(selectedQuestion);
       }
 

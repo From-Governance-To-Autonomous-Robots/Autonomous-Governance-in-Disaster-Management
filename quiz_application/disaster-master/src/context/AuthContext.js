@@ -235,9 +235,9 @@ export const AuthProvider = ({ children }) => {
               number_of_failed_trees: 0,
               feedback: ""
           }, { merge: true });
-          console.log('User record created ')
+          // console.log('User record created ')
         }else{
-          console.log('User Data : ',userDocSnapshot.data())
+          // console.log('User Data : ',userDocSnapshot.data())
         }
       } else {
         // Sign in anonymously
@@ -248,7 +248,7 @@ export const AuthProvider = ({ children }) => {
         const userDoc = doc(db, 'users', newUser.uid);
         
         await setDoc(userDoc, {
-            user_id: user.uid,
+            user_id: newUser.uid,
             nationality:"",
             age:0,
             gender:"",
@@ -293,12 +293,7 @@ export const AuthProvider = ({ children }) => {
                     availableAdditionalData: 5,
                     question_id: [],
                   },
-                  drone_damage: {
-                    user_answer: [],
-                    availableAdditionalData: 5,
-                    question_id: [],
-                  },
-                  drone_no_damage: {
+                  'drone-damage': {
                     user_answer: [],
                     availableAdditionalData: 5,
                     question_id: [],
@@ -336,12 +331,7 @@ export const AuthProvider = ({ children }) => {
                     availableAdditionalData: 5,
                     question_id: [],
                   },
-                  drone_damage: {
-                    user_answer: [],
-                    availableAdditionalData: 5,
-                    question_id: [],
-                  },
-                  drone_no_damage: {
+                  'drone-damage': {
                     user_answer: [],
                     availableAdditionalData: 5,
                     question_id: [],
@@ -379,12 +369,7 @@ export const AuthProvider = ({ children }) => {
                     availableAdditionalData: 5,
                     question_id: [],
                   },
-                  drone_damage: {
-                    user_answer: [],
-                    availableAdditionalData: 5,
-                    question_id: [],
-                  },
-                  drone_no_damage: {
+                  'drone-damage': {
                     user_answer: [],
                     availableAdditionalData: 5,
                     question_id: [],
@@ -422,12 +407,7 @@ export const AuthProvider = ({ children }) => {
                     availableAdditionalData: 5,
                     question_id: [],
                   },
-                  drone_damage: {
-                    user_answer: [],
-                    availableAdditionalData: 5,
-                    question_id: [],
-                  },
-                  drone_no_damage: {
+                  'drone-damage': {
                     user_answer: [],
                     availableAdditionalData: 5,
                     question_id: [],
@@ -465,12 +445,7 @@ export const AuthProvider = ({ children }) => {
                     availableAdditionalData: 5,
                     question_id: [],
                   },
-                  drone_damage: {
-                    user_answer: [],
-                    availableAdditionalData: 5,
-                    question_id: [],
-                  },
-                  drone_no_damage: {
+                  'drone-damage': {
                     user_answer: [],
                     availableAdditionalData: 5,
                     question_id: [],
@@ -486,7 +461,7 @@ export const AuthProvider = ({ children }) => {
             number_of_failed_trees: 0,
             feedback: ""
         }, { merge: true });
-         console.log('User record created ')
+        //  console.log('User record created ')
       }
       setLoading(false);
     });
