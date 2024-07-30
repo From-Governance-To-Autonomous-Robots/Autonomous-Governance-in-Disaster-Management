@@ -10,6 +10,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 10px; /* Add padding to prevent the popup from touching the screen edges */
 }
 
 .helper-popup {
@@ -22,6 +23,7 @@
   max-height: 90%;
   overflow-y: auto;
   position: relative;
+  box-sizing: border-box; /* Ensure padding is included in the width calculation */
 }
 
 .helper-popup h2 {
@@ -46,8 +48,8 @@
 
 .helper-image-container {
   width: 100%;
-  max-width: 500px;
-  height: 300px; /* Fixed height */
+  max-width: 100%; /* Ensure the image container adapts to the popup width */
+  height: auto; /* Allow height to adjust based on content */
   margin-top: 10px;
   border: 2px solid #fff;
   border-radius: 10px;
@@ -56,7 +58,7 @@
 
 .helper-image {
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: contain; /* Scale the image to fit within the container */
 }
 
@@ -69,4 +71,50 @@
   color: #fff;
   font-size: 1.2em;
   cursor: pointer;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .helper-popup {
+    padding: 15px;
+    width: 100%; /* Use full width of the screen */
+  }
+
+  .helper-popup h2 {
+    font-size: 1.2em;
+  }
+
+  .helper-popup p {
+    font-size: 0.9em;
+  }
+
+  .helper-item h3 {
+    font-size: 0.9em;
+  }
+
+  .close-button {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .helper-popup {
+    padding: 10px;
+  }
+
+  .helper-popup h2 {
+    font-size: 1em;
+  }
+
+  .helper-popup p {
+    font-size: 0.8em;
+  }
+
+  .helper-item h3 {
+    font-size: 0.8em;
+  }
+
+  .close-button {
+    font-size: 0.8em;
+  }
 }

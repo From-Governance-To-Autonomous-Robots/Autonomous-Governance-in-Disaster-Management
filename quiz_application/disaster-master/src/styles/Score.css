@@ -7,6 +7,8 @@
   background: linear-gradient(to bottom, #1e3c72, #2a5298);
   color: #fff;
   font-family: 'Arial', sans-serif;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .score-display1 {
@@ -15,13 +17,17 @@
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-  width: 80%;
+  width: 100%;
   max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .score-display1 h2 {
   font-size: 2.5em;
   margin-bottom: 20px;
+  color: #f39c12; /* Highlighted color */
 }
 
 .score-section {
@@ -31,6 +37,7 @@
 .score-section h3 {
   font-size: 1.5em;
   margin-bottom: 10px;
+  color: #e67e22; /* Highlighted color */
 }
 
 .score-bar {
@@ -80,6 +87,7 @@
   border: none;
   resize: none;
   margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .feedback-submit-button {
@@ -114,10 +122,91 @@
 }
 
 .volcano-gif {
-  width: 25%;
-  height:100%;
+  width: 200px;
+  height: 200px;
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .score-display1 {
+    padding: 20px;
+  }
+
+  .score-display1 h2 {
+    font-size: 2em;
+  }
+
+  .score-section h3 {
+    font-size: 1.2em;
+  }
+
+  .feedback-section h3 {
+    font-size: 1.2em;
+  }
+
+  .feedback-textarea {
+    font-size: 0.9em;
+  }
+
+  .feedback-submit-button {
+    font-size: 0.9em;
+    padding: 8px 16px;
+  }
+
+  .disclaimer-text {
+    font-size: 0.7em;
+  }
+
+  .volcano-container {
+    height: 150px; /* Adjust height for smaller screens */
+  }
+
+  .volcano-gif {
+    width: 150px;
+    height: 150px; /* Adjust size for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .score-display1 {
+    padding: 15px;
+  }
+
+  .score-display1 h2 {
+    font-size: 1.8em;
+  }
+
+  .score-section h3 {
+    font-size: 1em;
+  }
+
+  .feedback-section h3 {
+    font-size: 1em;
+  }
+
+  .feedback-textarea {
+    font-size: 0.8em;
+  }
+
+  .feedback-submit-button {
+    font-size: 0.8em;
+    padding: 6px 12px;
+  }
+
+  .disclaimer-text {
+    font-size: 0.6em;
+  }
+
+  .volcano-container {
+    height: 100px; /* Further adjust height for very small screens */
+  }
+
+  .volcano-gif {
+    width: 100px;
+    height: 100px; /* Further adjust size for very small screens */
+  }
 }

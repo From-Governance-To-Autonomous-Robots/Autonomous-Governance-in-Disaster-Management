@@ -23,8 +23,7 @@ const Question = ({ question, currentTreeLevel, handleAnswer, handleEndGame, map
       )}
       {phase === "train" && (
         <div className="training-text">
-          <h1>You are Currently in Training and Will not be Scored for your Decisions.</h1>
-          <h1>You have to learn to make correct decisions and then will be Moved to Start Playing Game.</h1>
+          <h1>Tutorial</h1>
         </div>
       )}
       <h1 className="scenario-title">Scenario-{phase === "train" ? "Train" : currentTreeLevel}</h1>

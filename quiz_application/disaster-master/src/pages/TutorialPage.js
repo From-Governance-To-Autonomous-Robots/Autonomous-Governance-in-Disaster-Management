@@ -11,33 +11,63 @@ import slide6Image from '../assets/slide_end.png';
 const slides = [
   {
     image: slide1Image,
-    text: `The user is shown data points relating to the disaster and is asked to make a decision. 1 Scenario is completed when the user has made a decision for all 5 levels in the scenario which involve: 
-
-    Informative vs Not informative data
-    Type of Informative data
-    Type of damage
-    Post-disaster damage assessment using satellite data
-    Post-disaster damage assessment using drone data`
+    text: (
+      <>
+        The user is shown data points relating to the disaster and is asked to make a decision. One scenario is completed when the user has made a decision for all 5 levels in the scenario, which involve:
+        <ul>
+          <li><strong>Informative vs Not informative data</strong></li>
+          <li><strong>Type of Informative data</strong></li>
+          <li><strong>Type of damage</strong></li>
+          <li><strong>Post-disaster damage assessment using satellite data</strong></li>
+          <li><strong>Post-disaster damage assessment using drone data</strong></li>
+        </ul>
+      </>
+    )
   },
   {
     image: slide2Image,
-    text: `The user will be shown a Training to get a Feel of how to participate in the Game. Once the Training is Completed you will see a Popup alert saying "You have Completed the Training! You will now be Scored for your Answers, Good Luck!" Again you will start getting scored.`
+    text: (
+      <>
+        The user will be shown a <strong>Training</strong> to get a feel of how to participate in the game. Once the training is completed, you will see a popup alert saying <strong style={{ color: '#f39c12' }}>"You have completed the training! You will now be scored for your answers. Good luck!"</strong> Again you will start getting scored.
+      </>
+    )
   },
   {
     image: slide3Image,
-    text: `You will have access to a Help Button during the Game, in case you want to see some training examples of what types of data points are seen in that level. This can help aid the decision you make in this level.`
+    text: (
+      <>
+        You will have access to a <strong>Help Button</strong> during the game, in case you want to see some training examples of what types of data points are seen in that level. This can help aid the decision you make in this level.
+      </>
+    )
   },
   {
     image: slide4Image,
-    text: `You will see Overall Score and Scenario Score. Scenario Score represents the score for the decisions made in that scenario. And Overall score is the aggregate score for all the scenarios the user has completed. You will be given a score of +1 for correct decisions in each level, -1 for requesting additional data, and -5 for every wrong decision.`
+    text: (
+      <>
+        You will see <strong>Overall Score</strong> and <strong>Scenario Score</strong>. Scenario Score represents the score for the decisions made in that scenario. And Overall Score is the aggregate score for all the scenarios the user has completed. You will be given a score of:
+        <ul>
+          <li><strong style={{ color: 'green' }}>+1</strong> for correct decisions in each level</li>
+          <li><strong style={{ color: 'orange' }}>-1</strong> for requesting additional data</li>
+          <li><strong style={{ color: 'red' }}>-5</strong> for every wrong decision</li>
+        </ul>
+      </>
+    )
   },
   {
     image: slide5Image,
-    text: `You will see a button "Unsure. More data needed". Use this if you cannot make a decision on the data you are seeing. For each level in 1 scenario you have 5 chances to request additional data, however each chance can have a -1 to your score.`
+    text: (
+      <>
+        You will see a button <strong>"Unsure. More data needed"</strong>. Use this if you cannot make a decision on the data you are seeing. For each level in one scenario, you have <strong>5 chances</strong> to request additional data; however, each chance can have a <strong style={{ color: 'orange' }}>-1</strong> to your score.
+      </>
+    )
   },
   {
     image: slide6Image,
-    text: `Click on End Game button, after you have completed 5 or more Scenarios.`
+    text: (
+      <>
+        Click on the <strong>End Game button</strong>, after you have completed <strong>5 or more Scenarios</strong>.
+      </>
+    )
   }
 ];
 
@@ -63,7 +93,7 @@ const TutorialPage = () => {
         <div className="slide-image-container">
           <img src={slides[currentSlide].image} alt={`Slide ${currentSlide + 1}`} className="slide-image" />
         </div>
-        <p className="slide-text">{slides[currentSlide].text}</p>
+        <div className="slide-text">{slides[currentSlide].text}</div>
       </div>
       <div className="navigation-buttons">
         <button onClick={prevSlide} disabled={currentSlide === 0} className="nav-button">Previous</button>

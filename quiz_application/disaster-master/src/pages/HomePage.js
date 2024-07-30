@@ -64,7 +64,7 @@ const HomePage = () => {
           <p>
             In this survey, you will make decisions at different levels:
             <ul>
-              <li>Informative vs Not informative data</li>
+              <li>Informative vs Non-informative data</li>
               <li>Type of Informative data</li>
               <li>Type of damage</li>
               <li>Post-disaster damage assessment using satellite data</li>
