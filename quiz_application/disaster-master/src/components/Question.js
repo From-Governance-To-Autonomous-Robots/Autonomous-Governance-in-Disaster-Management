@@ -45,7 +45,7 @@ const Question = ({ question, currentTreeLevel, handleAnswer, handleEndGame, map
           </button>
         ))}
       </div>
-      {phase !== "train" && (
+      {phase !== "train" && currentTreeLevel > 2  && (
         <button
           onClick={handleEndGame}
           className="end-game-button"
