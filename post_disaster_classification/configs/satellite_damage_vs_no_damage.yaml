@@ -5,7 +5,7 @@ paths:
   task: 'satellite_damage_vs_no_damage'
 
 original_data:
-  root_dir: "/home/docsun/Documents/git-repo/juliangdz/Dataset/blurred_multilabel_dataset"
+  root_dir: "/home/julian/datasets/XBD/blurred_multilabel_dataset"
   train_directory: "/home/julian/datasets/XBD/train_images_labels_targets/train"
   val_directory: "/home/julian/datasets/XBD/test_images_labels_targets/test"
   label_folder_prefix: 'targets'

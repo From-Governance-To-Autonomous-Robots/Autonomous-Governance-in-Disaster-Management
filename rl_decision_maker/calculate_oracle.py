@@ -12,7 +12,7 @@ from utils.log_helper import log_aggregate_stats
 class OracleSequenceValEnv():
     def __init__(self):
         super(OracleSequenceValEnv, self).__init__()
-        self.CONFIG = load_config()
+        self.CONFIG = load_config("/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/configs/oracle_config.yaml")
         self.tasks = self.CONFIG['tasks']
         # Load the Datasets for each task
         self.info_dataset = self._get_data_based_on_task("info")
@@ -28,6 +28,8 @@ class OracleSequenceValEnv():
         self.seen_drone = []
         
         self.isTreeCorrectlyAnswered = [False] * len(self.tasks)
+        self.isTreeAdditionalDataRequested = [False] * len(self.tasks)
+        self.isTreeWronglyAnswered = [False] * len(self.tasks)
         self.currentEpisode = 0
         self.currentStep = 0
         self.tree_counter = 0
@@ -92,7 +94,7 @@ class OracleSequenceValEnv():
         return dataset.loc[selected_idx]["ground_truth"], list(dataset.loc[selected_idx]["prediction_conf"]).index(max(dataset.loc[selected_idx]["prediction_conf"]))
 
     def _get_data_based_on_task(self, task: str):
-        dataset = pd.read_csv(os.path.join(self.CONFIG['data_path'], task, f"val_inference_results.csv"))
+        dataset = pd.read_csv(os.path.join(self.CONFIG['data_path'], task, f"train_inference_results.csv"))
         dataset["prediction_conf"] = dataset["prediction_conf"].apply(lambda x: list(map(float, x.strip("[]").split())))
         return dataset
     
@@ -104,6 +106,8 @@ class OracleSequenceValEnv():
         self.seen_drone = []
         
         self.isTreeCorrectlyAnswered = [False] * len(self.tasks)
+        self.isTreeAdditionalDataRequested = [False] * len(self.tasks)
+        self.isTreeWronglyAnswered = [False] * len(self.tasks)
         self.number_of_times_additional_data_requested = 0
         self.currentStep = 0
         
@@ -120,10 +124,12 @@ class OracleSequenceValEnv():
         task = self.tasks[self.task_index]
         if self.ground_truth == self.current_task_info:
             self.isTreeCorrectlyAnswered[self.task_index] = True
+            self.isTreeWronglyAnswered[self.task_index] = False
             self.tree_score += 1
             self.task_index += 1
         else:
             self.isTreeCorrectlyAnswered[self.task_index] = False
+            self.isTreeWronglyAnswered[self.task_index] = True
             self.tree_score -=5
             self.task_index += 1
         
@@ -144,6 +150,7 @@ class OracleSequenceValEnv():
             info = {
                 "episode_ended": True,
                 "isTreeCorrectlyAnswered": np.mean(self.isTreeCorrectlyAnswered),
+                "isTreeWronglyAnswered":np.mean(self.isTreeWronglyAnswered),
                 "currentEpisode": self.currentEpisode,
                 "tree_id": self.tree_counter,
                 "tree_score":self.tree_score,
@@ -154,6 +161,7 @@ class OracleSequenceValEnv():
             info = {
                 "episode_ended": False,
                 "isTreeCorrectlyAnswered": np.mean(self.isTreeCorrectlyAnswered),
+                "isTreeWronglyAnswered":np.mean(self.isTreeWronglyAnswered),
                 "currentEpisode": self.currentEpisode,
                 "tree_id": self.tree_counter,
                 "tree_score":self.tree_score,
@@ -166,7 +174,7 @@ class OracleSequenceValEnv():
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('-config',type=str,default="/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/configs/config.yaml")
+    parser.add_argument('-config',type=str,default="/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/configs/oracle_config.yaml")
     args = parser.parse_args()
     config = load_config(args.config)
     
@@ -182,13 +190,16 @@ def main():
     collected_dictionary = {
         "episode_ended":[],
         "isTreeCorrectlyAnswered":[],
+        "isTreeWronglyAnswered":[],
         "currentEpisode":[],
         "tree_id":[],
         "tree_score":[],
         "number_of_correctly_answered_trees":[],
         "number_of_wrongly_answered_trees":[]
     }
-
+    number_of_correctly_answered_trees=0
+    number_of_wrongly_answered_trees=0
+    tree_id=0
     while step_count < total_steps:
         done, info = env.step()
         step_count += 1
@@ -196,6 +207,7 @@ def main():
         if done:
             episode_count += 1
             collected_dictionary["isTreeCorrectlyAnswered"].append(info["isTreeCorrectlyAnswered"])
+            collected_dictionary["isTreeWronglyAnswered"].append(info["isTreeWronglyAnswered"])
             collected_dictionary["currentEpisode"].append(info["currentEpisode"])
             collected_dictionary["tree_id"].append(info["tree_id"])
             collected_dictionary['tree_score'].append(info["tree_score"])
@@ -203,12 +215,26 @@ def main():
             collected_dictionary["number_of_wrongly_answered_trees"].append(info["number_of_wrongly_answered_trees"])
 #            wandb.log(info)
             env.reset()
-
-    log_aggregate_stats(collected_dictionary,key="isTreeCorrectlyAnswered",log_string="isTreeCorrectlyAnswered",step=step_count)
-    log_aggregate_stats(collected_dictionary,key="tree_score",log_string="tree_score",step=step_count)
-    wandb.log({"number_of_correctly_answered_trees":max(collected_dictionary["number_of_correctly_answered_trees"])})
-    wandb.log({"number_of_wrongly_answered_trees":max(collected_dictionary["number_of_wrongly_answered_trees"])})
-    wandb.log({"completed_trees":max(collected_dictionary["tree_id"])})
+        if (step_count) % log_interval == 0 or step_count == total_steps -1 :
+            log_aggregate_stats(collected_dictionary,key="isTreeCorrectlyAnswered",log_string="isTreeCorrectlyAnswered",step=step_count)
+            log_aggregate_stats(collected_dictionary,key="isTreeWronglyAnswered",log_string="isTreeWronglyAnswered",step=step_count)
+            log_aggregate_stats(collected_dictionary,key="tree_score",log_string="tree_score",step=step_count)
+            number_of_correctly_answered_trees=max(collected_dictionary["number_of_correctly_answered_trees"])
+            number_of_wrongly_answered_trees=max(collected_dictionary["number_of_wrongly_answered_trees"])
+            tree_id =max(collected_dictionary["tree_id"])
+            collected_dictionary = {
+                "episode_ended":[],
+                "isTreeCorrectlyAnswered":[],
+                "isTreeWronglyAnswered":[],
+                "currentEpisode":[],
+                "tree_id":[],
+                "tree_score":[],
+                "number_of_correctly_answered_trees":[],
+                "number_of_wrongly_answered_trees":[]
+            }
+    wandb.log({"number_of_correctly_answered_trees":number_of_correctly_answered_trees})
+    wandb.log({"number_of_wrongly_answered_trees":number_of_wrongly_answered_trees})
+    wandb.log({"completed_trees":tree_id})
     wandb.finish()
 
 if __name__ == "__main__":

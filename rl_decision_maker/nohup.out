@@ -1,0 +1,48 @@
+/home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/calculate_oracle.py:3: DeprecationWarning: 
+Pyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),
+(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)
+but was not found to be installed on your system.
+If this would cause problems for you,
+please provide us feedback at https://github.com/pandas-dev/pandas/issues/54466
+        
+  import pandas as pd
+wandb: Currently logged in as: juliangeralddcruz. Use `wandb login --relogin` to force relogin
+wandb: wandb version 0.17.6 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.16.2
+wandb: Run data is saved locally in /home/julian/git-repo/juliangdz/GovernanceIRP/Autonomous-Governance-in-Disaster-Management/rl_decision_maker/wandb/run-20240814_024809-poygwgfz
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run run_oracle_decision_maker_(train)
+wandb: ⭐️ View project at https://wandb.ai/juliangeralddcruz/disaster_oracle
+wandb: 🚀 View run at https://wandb.ai/juliangeralddcruz/disaster_oracle/runs/poygwgfz
+wandb: - 0.008 MB of 0.008 MB uploaded (0.003 MB deduped)wandb: \ 0.008 MB of 0.008 MB uploaded (0.003 MB deduped)wandb: | 0.018 MB of 0.018 MB uploaded (0.003 MB deduped)wandb:                                                                                
+wandb: W&B sync reduced upload amount by 16.3%             
+wandb: 
+wandb: Run history:
+wandb:                    completed_trees ▁
+wandb:       mean_isTreeCorrectlyAnswered ▆▆▄▅▆▇▄▆█▅▆▇▄▆▅▇▆▆▁▆▅▅▇▆▄▆▅█▅▇▇▇█▅█▄▇▅█▆
+wandb:         mean_isTreeWronglyAnswered ▃▃▅▄▃▂▅▃▁▄▃▂▅▃▄▂▃▃█▃▄▄▂▃▅▃▄▁▄▂▂▂▁▄▁▅▂▄▁▃
+wandb:                    mean_tree_score ▆▆▄▅▆▇▄▆█▅▆▇▄▆▅▇▆▆▁▆▅▅▇▆▄▆▅█▅▇▇▇█▅█▄▇▅█▆
+wandb: number_of_correctly_answered_trees ▁
+wandb:   number_of_wrongly_answered_trees ▁
+wandb:        std_isTreeCorrectlyAnswered ▄▃▅▄▃▂▅▃▁▄▃▂▅▃▄▂▃▃█▄▅▄▂▃▅▃▅▁▄▂▂▂▁▄▁▅▂▄▁▃
+wandb:          std_isTreeWronglyAnswered ▄▃▅▄▃▂▅▃▁▄▃▂▅▃▄▂▃▃█▄▅▄▂▃▅▃▅▁▄▂▂▂▁▄▁▅▂▄▁▃
+wandb:                     std_tree_score ▄▃▅▄▃▂▅▃▁▄▃▂▅▃▄▂▃▃█▄▅▄▂▃▅▃▅▁▄▂▂▂▁▄▁▅▂▄▁▃
+wandb:                               step ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
+wandb: 
+wandb: Run summary:
+wandb:                    completed_trees 16000000
+wandb:       mean_isTreeCorrectlyAnswered 1.0
+wandb:         mean_isTreeWronglyAnswered 0.0
+wandb:                    mean_tree_score 5.0
+wandb: number_of_correctly_answered_trees 14157143
+wandb:   number_of_wrongly_answered_trees 1842857
+wandb:        std_isTreeCorrectlyAnswered 0.0
+wandb:          std_isTreeWronglyAnswered 0.0
+wandb:                     std_tree_score 0.0
+wandb:                               step 80000001
+wandb: 
+wandb: 🚀 View run run_oracle_decision_maker_(train) at: https://wandb.ai/juliangeralddcruz/disaster_oracle/runs/poygwgfz
+wandb: ️⚡ View job at https://wandb.ai/juliangeralddcruz/disaster_oracle/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjQxMzg0Mzg1Ng==/version_details/v2
+wandb: Synced 5 W&B file(s), 0 media file(s), 2 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20240814_024809-poygwgfz/logs

@@ -6,7 +6,7 @@ paths:
     - 'val'
 
 original_data:
-  root_dir: "/home/docsun/Datasets/RescueNet/blurred_multilabel_dataset"
+  root_dir: "/home/julian/datasets/RescueNet/blurred_multilabel_dataset"
   train_directory: "/home/julian/datasets/RescueNet/train"
   val_directory: "/home/julian/datasets/RescueNet/val"
   label_folder_prefix: 'targets'
