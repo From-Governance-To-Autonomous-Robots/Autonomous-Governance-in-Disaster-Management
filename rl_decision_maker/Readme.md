@@ -1,4 +1,4 @@
-# Causal Reinforcement Learning Decision Maker
+# Reinforcement Learning Decision Maker
 
 ## TO:DO 
 
